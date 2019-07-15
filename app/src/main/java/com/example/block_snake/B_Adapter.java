@@ -21,7 +21,9 @@ public class B_Adapter extends B_CommonAdapter {
         ImageView imageView=helper.getView(R.id.adapter_image);
         Integer integer=(Integer) item;
         if (integer>0){
-
+            imageView.setImageResource(B_Shape.color[integer-1]);
         }
+        else
+            imageView.setBackgroundColor(Color.parseColor("#29505B"));
     }
 }
