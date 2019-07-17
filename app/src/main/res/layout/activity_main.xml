@@ -46,6 +46,13 @@
                 android:text="等级："
                 android:textSize="20dp"
                 android:id="@+id/level"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="最高分："
+                android:textSize="20dp"
+                android:id="@+id/highestScore"/>
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
