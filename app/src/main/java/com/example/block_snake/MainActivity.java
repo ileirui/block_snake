@@ -401,13 +401,13 @@ public class MainActivity extends AppCompatActivity {
                 for (int i=3;i>=0;i--){
                     int line =i+position[0];
                     //检查是否越界
-                    if (leftMath(B_Shape.shape[rand][i],position[1])>0x3ff){
+                    if (leftMath(B_Shape.shape[nextB][i],position[1])>0x3ff){
                         return;  //右边界
-                    }else if (B_Shape.shape[nextB][i]>0&&line>ySize){
+                    }else if (B_Shape.shape[nextB][i]>0&&line>=ySize){
                         return;   //下边界
-                    }else if (leftMath(leftMath(B_Shape.shape[rand][i],position[1]),-position[1])!=B_Shape.shape[nextB][i]){
+                    }else if (leftMath(leftMath(B_Shape.shape[nextB][i],position[1]),-position[1])!=B_Shape.shape[nextB][i]){
                         return;   //左边界
-                    }else if (line>0&&line<ySize&&(leftMath(B_Shape.shape[rand][i],position[1])&allBlock[line])!=0){
+                    }else if (line>0&&line<ySize&&(leftMath(B_Shape.shape[nextB][i],position[1])&allBlock[line])!=0){
                         return;   //检查是否与其他方块重合
                     }
                 }
