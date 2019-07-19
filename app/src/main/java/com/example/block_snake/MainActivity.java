@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     int randColor;           //随机颜色
     int rand;
     int nextRand,nextRandColor;
-    int stop=0;
 
     //方块下落线程
     Handler handler=new Handler(){
@@ -231,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("再来一局", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                stop =0;
+                score =0;
                 position[0]=-4;  //初始化方块位置
                 position[1]=4;
                 for (int i=0;i<ySize;i++){
