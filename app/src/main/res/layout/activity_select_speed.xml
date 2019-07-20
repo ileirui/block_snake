@@ -32,27 +32,31 @@
         android:text="简单"
         android:textSize="30sp"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"/>
+        android:layout_marginTop="50dp"
+        android:id="@+id/btn_easy"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="普通"
         android:textSize="30sp"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"/>
+        android:layout_marginTop="50dp"
+        android:id="@+id/btn_ordinary"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="困难"
         android:textSize="30sp"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"/>
+        android:layout_marginTop="50dp"
+        android:id="@+id/btn_hard"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="噩梦"
         android:textSize="30sp"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"/>
+        android:layout_marginTop="50dp"
+        android:id="@+id/btn_other"/>
 
 </LinearLayout>

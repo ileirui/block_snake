@@ -1,6 +1,9 @@
 package com.example.block_snake;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
@@ -24,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     B_Adapter block,nextBlock;     //方块及下一方块
     B_Cache b_cache;         //方块缓存
     int[][] b_color=new int[15][10];  //方块颜色
-    int score=0,highestScore=0;             //分数，最高分
+    int score=0,highestScore=0,level;             //分数，最高分,等级
     Random random;           //随机变量
     int[] position=new int[]{-4,4};  //方块位置，position[0]为y轴位置
     Timer timer;             //时间变量
@@ -39,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     int randColor;           //随机颜色
     int rand;
     int nextRand,nextRandColor;
+    SQLiteDatabase db;  //数据库连接变量
+    DBhelper dBhelper;
 
     //方块下落线程
     Handler handler=new Handler(){
@@ -164,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         //若最后一行也满了，则游戏失败，保存数据
         if (allBlock[0]!=0){
             if (score>highestScore){
-                b_cache.getValue("highestScore",score+"");
+//                b_cache.getValue("highestScore",score+"");
                 highestScore=score;
                 t_highestScore.setText("最高分: "+highestScore);
                 t_score.setText("分数: "+score);
@@ -220,7 +225,8 @@ public class MainActivity extends AppCompatActivity {
 
     //游戏结束
     private void gameOver(){
-        b_cache.putValue("highestScore",String.valueOf(highestScore));
+//        b_cache.putValue("highestScore",String.valueOf(highestScore));
+        update(highestScore,level);
         stopTimer();
         //创建弹窗
         AlertDialog.Builder builder=new AlertDialog.Builder(MainActivity.this);
@@ -276,21 +282,6 @@ public class MainActivity extends AppCompatActivity {
 
     //缓存及控件初始化函数
     public void init(){
-        //初始化缓存并尝试获取数据
-        b_cache=new B_Cache(MainActivity.this,"userInfo");
-        String hScore="";
-        try {
-            hScore=b_cache.getValue("highestScore",String.valueOf(0));
-        }catch (Exception e){
-            Log.e("MainActivity",e.toString());
-        }
-
-        //尝试将最高分准换成整型
-        try{
-            highestScore=Integer.parseInt(hScore.toString());
-        }catch (NumberFormatException e){
-            highestScore=0;
-        }
 
         //控件初始化
         t_score=findViewById(R.id.score);
@@ -444,11 +435,84 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    //选择难度
+    public void changeLevel(){
+        Intent intent=getIntent();
+        level=intent.getIntExtra("level",2);
+        switch (level){
+            case 1:
+                timeInterval=1000;
+                break;
+            case 2:
+                timeInterval=800;
+                break;
+            case 3:
+                timeInterval=600;
+                break;
+            case 4:
+                timeInterval=400;
+                break;
+        }
+    }
+
+    //数据库更新函数
+    public void update(int highScore,int le){
+        db=dBhelper.getWritableDatabase();
+        int id=1;
+        switch (le){
+            case 1:
+                db.execSQL("update UserInfo set easy=? where id=?",new Object[]{highScore,id});
+                break;
+            case 2:
+                db.execSQL("update UserInfo set ordinary=? where id=?",new Object[]{highScore,id});
+                break;
+            case 3:
+                db.execSQL("update UserInfo set hard=? where id=?",new Object[]{highScore,id});
+                break;
+            case 4:
+                db.execSQL("update UserInfo set other=? where id=?",new Object[]{highScore,id});
+                break;
+        }
+        db.close();
+    }
+
+    //数据库查询函数
+    public void select(int le){
+        db=dBhelper.getReadableDatabase();
+        int id=1;
+        Cursor cursor=db.rawQuery("select * from UserInfo where id=?",new String[]{String.valueOf(id)});
+        if (cursor.getCount()!=0){
+            cursor.moveToFirst();
+            switch (le){
+                case 1:
+                    t_highestScore.setText("最高分: "+cursor.getString(cursor.getColumnIndex("easy")));
+                    t_level.setText("等级: 简单");
+                    break;
+                case 2:
+                    t_highestScore.setText("最高分: "+cursor.getString(cursor.getColumnIndex("ordinary")));
+                    t_level.setText("等级: 普通");
+                    break;
+                case 3:
+                    t_highestScore.setText("最高分: "+cursor.getString(cursor.getColumnIndex("hard")));
+                    t_level.setText("等级: 困难");
+                    break;
+                case 4:
+                    t_highestScore.setText("最高分: "+cursor.getString(cursor.getColumnIndex("other")));
+                    t_level.setText("等级: 噩梦");
+                    break;
+            }
+        }
+        db.close();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        dBhelper=new DBhelper(this);
+        changeLevel();
         init();
+        select(level);
         btn_Move();
     }
 }

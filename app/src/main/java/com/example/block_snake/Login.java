@@ -12,7 +12,7 @@ public class Login extends AppCompatActivity {
     SQLiteDatabase db;
     DBhelper dBhelper;
     Button btn_login;
-    int id =1;
+    int id =1,score=0;
     String name="游客",picture="R.drawable.1";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +37,7 @@ public class Login extends AppCompatActivity {
             startActivity(intent);
         } else {
             db=dBhelper.getWritableDatabase();
-            db.execSQL("insert into UserInfo(id,name,picture)values(?,?,?)",new Object[]{id,name,picture});
+            db.execSQL("insert into UserInfo(id,name,picture,easy,ordinary,hard,other)values(?,?,?,?,?,?,?)",new Object[]{id,name,picture,score,score,score,score});
             db.close();
             Intent intent=new Intent(Login.this,SelectMode.class);
             startActivity(intent);
