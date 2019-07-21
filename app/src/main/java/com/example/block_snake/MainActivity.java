@@ -4,8 +4,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     Random random;           //随机变量
     int[] position=new int[]{-4,4};  //方块位置，position[0]为y轴位置
     Timer timer;             //时间变量
-    Button b_btn_up,b_btn_down,b_btn_left,b_btn_right,s_btn_up,s_btn_down,s_btn_left,s_btn_right;  //移动按钮
+    Button b_btn_up,b_btn_down,b_btn_left,b_btn_right,s_btn_up,s_btn_down,s_btn_left,s_btn_right,btn_pause;  //移动按钮
     //画布的格子数为10x15；
     int ySize=15;
     int xSize=10;
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     int nextRand,nextRandColor;
     SQLiteDatabase db;  //数据库连接变量
     DBhelper dBhelper;
+    boolean p=false;   //暂停按钮控制变量
 
     //方块下落线程
     Handler handler=new Handler(){
@@ -295,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
         t_highestScore.setText("最高分: "+highestScore);
         b_s_view=findViewById(R.id.b_s_view);
         b_next_view=findViewById(R.id.b_next_view);
+        btn_pause=findViewById(R.id.pause);
 
         for (int i=0;i<10;i++){
             for (int j=0;j<15;j++){
@@ -434,6 +438,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        //暂停按钮
+        btn_pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pause();
+            }
+        });
     }
 
     //选择难度
@@ -504,6 +515,47 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         db.close();
+    }
+
+    public void onBackPressed() {
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setMessage("是否退出游戏？");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finishAffinity();
+            }
+        });
+        builder.setNegativeButton("返回", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).create();
+        builder.show();
+    }
+
+    //暂停游戏
+    public void pause(){
+        Drawable pa= ResourcesCompat.getDrawable(getResources(),R.drawable.pause,null);
+        Drawable st= ResourcesCompat.getDrawable(getResources(),R.drawable.start,null);
+        if (!p){
+            stopTimer();
+            b_btn_down.setEnabled(false);
+            b_btn_up.setEnabled(false);
+            b_btn_right.setEnabled(false);
+            b_btn_left.setEnabled(false);
+            btn_pause.setBackground(pa);
+        }
+        else {
+            startTimer();
+            b_btn_down.setEnabled(true);
+            b_btn_up.setEnabled(true);
+            b_btn_right.setEnabled(true);
+            b_btn_left.setEnabled(true);
+            btn_pause.setBackground(st);
+        }
+        p=!p;
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {

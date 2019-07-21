@@ -2,8 +2,10 @@ package com.example.block_snake;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,7 +16,7 @@ public class UserInformation extends AppCompatActivity {
     TextView easy_score,ordinary_score,hard_score,other_score,user_name;
     SQLiteDatabase db;
     DBhelper dBhelper;
-    Button chang_name;
+    Button chang_name,btn_back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +27,7 @@ public class UserInformation extends AppCompatActivity {
         other_score=findViewById(R.id.other_score);
         chang_name=findViewById(R.id.change_name);
         user_name=findViewById(R.id.user_name);
+        btn_back=findViewById(R.id.btn_back);
         dBhelper=new DBhelper(this);
 
         db=dBhelper.getReadableDatabase();
@@ -44,6 +47,13 @@ public class UserInformation extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 changeName();
+            }
+        });
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(UserInformation.this,SelectMode.class);
+                startActivity(intent);
             }
         });
     }
@@ -84,5 +94,23 @@ public class UserInformation extends AppCompatActivity {
         }
         db.close();
         return name;
+    }
+
+    public void onBackPressed() {
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setMessage("是否退出游戏？");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finishAffinity();
+            }
+        });
+        builder.setNegativeButton("返回", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).create();
+        builder.show();
     }
 }
