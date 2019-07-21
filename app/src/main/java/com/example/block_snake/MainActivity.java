@@ -240,6 +240,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 score =0;
+                t_score.setText("分数: "+score);
                 position[0]=-4;  //初始化方块位置
                 position[1]=4;
                 for (int i=0;i<ySize;i++){

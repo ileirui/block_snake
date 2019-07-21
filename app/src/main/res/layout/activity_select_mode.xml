@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,26 +12,37 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@drawable/back" />
-    <RelativeLayout
+
+    <ViewFlipper
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/star_g"
-            android:id="@+id/user_picture"/>
+        android:autoStart="true"
+        android:flipInterval="3000"
+        android:layout_centerHorizontal="true"
+        android:inAnimation="@android:anim/slide_in_left"
+        android:outAnimation="@android:anim/slide_out_right">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="游客"
-            android:textSize="30sp"
-            android:layout_alignBottom="@id/user_picture"
-            android:layout_toRightOf="@id/user_picture"
-            android:layout_marginLeft="10dp"
-            android:id="@+id/user_name"/>
-    </RelativeLayout>
+            android:text="2019年第十七届齐鲁软件大赛参赛作品"
+            android:textSize="20sp"
+            android:ellipsize="middle"/>
+    </ViewFlipper>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/star_g"
+        android:id="@+id/user_picture"
+        android:layout_below="@id/btn_back"
+        android:layout_margin="20dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="游客"
+        android:textSize="30sp"
+        android:layout_alignBottom="@id/user_picture"
+        android:layout_toRightOf="@id/user_picture"
+        android:id="@+id/user_name"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -40,7 +51,9 @@
         android:textSize="30sp"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
-        android:id="@+id/btn_danji"/>
+        android:id="@+id/btn_danji"
+        android:layout_below="@id/user_name"
+        android:layout_centerHorizontal="true"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -48,6 +61,8 @@
         android:text="局域网联机"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
-        android:id="@+id/btn_lianji"/>
+        android:id="@+id/btn_lianji"
+        android:layout_below="@id/btn_danji"
+        android:layout_centerHorizontal="true"/>
 
-</LinearLayout>
+</RelativeLayout>

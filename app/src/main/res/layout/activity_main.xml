@@ -81,7 +81,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="左移"
+        android:text="&lt;"
         android:textSize="30sp"
         android:id="@+id/b_btn_left"
         android:layout_below="@id/b_btn_up"/>
@@ -147,5 +147,20 @@
         android:layout_toRightOf="@id/b_next_view"
         android:layout_below="@id/setting"
         android:background="@drawable/start"/>
+    <ViewFlipper
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autoStart="true"
+        android:flipInterval="3000"
+        android:layout_centerHorizontal="true"
+        android:inAnimation="@android:anim/slide_in_left"
+        android:outAnimation="@android:anim/slide_out_right">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2019年第十七届齐鲁软件大赛参赛作品"
+            android:textSize="20sp"
+            android:ellipsize="middle" />
+    </ViewFlipper>
 
 </RelativeLayout>

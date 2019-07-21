@@ -10,6 +10,21 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@drawable/back" />
+    <ViewFlipper
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autoStart="true"
+        android:flipInterval="3000"
+        android:inAnimation="@android:anim/slide_in_left"
+        android:outAnimation="@android:anim/slide_out_right"
+        android:layout_centerHorizontal="true">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2019年第十七届齐鲁软件大赛参赛作品"
+            android:textSize="20sp"
+            android:ellipsize="middle"/>
+    </ViewFlipper>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
