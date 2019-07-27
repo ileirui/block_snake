@@ -28,9 +28,9 @@
             android:textSize="20sp"
             android:ellipsize="middle"/>
     </ViewFlipper>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:background="@drawable/star_g"
         android:id="@+id/user_picture"
         android:layout_below="@id/btn_back"
@@ -49,20 +49,18 @@
         android:layout_height="wrap_content"
         android:text="单机游戏"
         android:textSize="30sp"
-        android:layout_gravity="center"
-        android:layout_marginTop="100dp"
         android:id="@+id/btn_danji"
         android:layout_below="@id/user_name"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="30sp"
         android:text="局域网联机"
-        android:layout_gravity="center"
-        android:layout_marginTop="100dp"
         android:id="@+id/btn_lianji"
         android:layout_below="@id/btn_danji"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"/>
 
 </RelativeLayout>

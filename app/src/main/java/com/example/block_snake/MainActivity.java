@@ -18,6 +18,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
@@ -27,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     TextView t_level,t_score,t_highestScore;    //等级和分数标签,最高分标签
     int timeInterval=800;    //时间间隔
     B_Adapter block,nextBlock;     //方块及下一方块
-    B_Cache b_cache;         //方块缓存
     int[][] b_color=new int[15][10];  //方块颜色
     int score=0,highestScore=0,level;             //分数，最高分,等级
     Random random;           //随机变量
@@ -41,6 +41,16 @@ public class MainActivity extends AppCompatActivity {
     GridView b_s_view,b_next_view;       //主画布及方块下一跳画布
     List<Integer> blockList=new ArrayList<>();   //方块列表
     List<Integer> blockNextList=new ArrayList<>();  //方块下一跳列表
+
+//---------------------------------------------------
+    LinkedList<S_node> snakeBody;
+    LinkedList<S_node> snakeBodyC ;
+    int direction=12;   //0为上，1为下，2为左，3为右
+    int S_up=10,S_down=11,S_left=12,S_right=13;
+    S_node food;
+    int status=0;
+//-----------------------------------------------------
+
     int randColor;           //随机颜色
     int rand;
     int nextRand,nextRandColor;
@@ -119,11 +129,105 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+
+
+            //---------------------------------------------------------------------------------------------------------
+            blockList.set(food.getNodeY()*xSize+food.getNodeX(),1);
+            if (direction == 13) {
+                snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() + 1, snakeBody.getFirst().getNodeY()));
+                if (snakeBody.getFirst().getNodeX() > 9)
+                    gameOver();
+                if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX() - 1)) != 0)
+                    gameOver();
+                snakeBodyC = (LinkedList<S_node>) snakeBody.clone();
+                snakeBodyC.remove();
+                for (S_node node : snakeBodyC) {
+                    if (node.getNodeX() == snakeBody.getFirst().getNodeX() && node.getNodeY() == snakeBody.getFirst().getNodeY()) {
+                        gameOver();
+                    }
+                }
+
+                if (snakeBody.getFirst().getNodeX() == food.getNodeX() && snakeBody.getFirst().getNodeY() == food.getNodeY()) {
+                    food = S_food();
+                } else
+                    snakeBody.removeLast();
+            }
+            if (direction == 12) {
+                snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() - 1, snakeBody.getFirst().getNodeY()));
+                if (snakeBody.getFirst().getNodeX() < 0)
+                    gameOver();
+                if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX() + 1)) != 0)
+                    gameOver();
+                snakeBodyC = (LinkedList<S_node>) snakeBody.clone();
+                snakeBodyC.remove();
+                for (S_node node : snakeBodyC) {
+                    if (node.getNodeX() == snakeBody.getFirst().getNodeX() && node.getNodeY() == snakeBody.getFirst().getNodeY()) {
+                        gameOver();
+                    }
+                }
+                if (snakeBody.getFirst().getNodeX() == food.getNodeX() && snakeBody.getFirst().getNodeY() == food.getNodeY()) {
+                    food = S_food();
+                } else
+                    snakeBody.removeLast();
+            }
+            if (direction == 10) {
+                snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() - 1));
+                if (snakeBody.getFirst().getNodeY() < 0)
+                    gameOver();
+                else {
+                    if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0)
+                        gameOver();
+                }
+                snakeBodyC = (LinkedList<S_node>) snakeBody.clone();
+                snakeBodyC.remove();
+                for (S_node node : snakeBodyC) {
+                    if (node.getNodeX() == snakeBody.getFirst().getNodeX() && node.getNodeY() == snakeBody.getFirst().getNodeY()) {
+                        gameOver();
+                    }
+                }
+                if (snakeBody.getFirst().getNodeX() == food.getNodeX() && snakeBody.getFirst().getNodeY() == food.getNodeY()) {
+                    food = S_food();
+                } else
+                    snakeBody.removeLast();
+            }
+            if (direction == 11) {
+                snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() + 1));
+                if (snakeBody.getFirst().getNodeY() > 14)
+                    gameOver();
+                else {
+                    if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0)
+                        gameOver();
+                }
+                snakeBodyC = (LinkedList<S_node>) snakeBody.clone();
+                snakeBodyC.remove();
+                for (S_node node : snakeBodyC) {
+                    if (node.getNodeX() == snakeBody.getFirst().getNodeX() && node.getNodeY() == snakeBody.getFirst().getNodeY()) {
+                        gameOver();
+                    }
+                }
+                if (snakeBody.getFirst().getNodeX() == food.getNodeX() && snakeBody.getFirst().getNodeY() == food.getNodeY()) {
+                    food = S_food();
+                } else
+                    snakeBody.removeLast();
+            }
+            for (S_node node:snakeBody)
+                blockList.set(node.getNodeY() * xSize + node.getNodeX(), 7);
+            blockList.set(snakeBody.getFirst().getNodeY() * xSize + snakeBody.getFirst().getNodeX(), 6);
+            //---------------------------------------------------------------------------------------------------------------
+
             block.setmDatas(blockList);
             block.notifyDataSetChanged();
         }
     };
 
+    //---------------------------------------------
+    //食物生成函数
+    S_node S_food(){
+        random=new Random();
+        S_node foodrandom = new S_node( random.nextInt(9), random.nextInt(14));
+        return foodrandom;
+    }
+    //---------------------------------------------
     //移位函数
     int leftMath(int a,int b){
         if (b<0)
@@ -197,6 +301,7 @@ public class MainActivity extends AppCompatActivity {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                status=0;
                 handler.sendEmptyMessage(0);
             }
         },0,timeInterval);
@@ -228,7 +333,6 @@ public class MainActivity extends AppCompatActivity {
 
     //游戏结束
     private void gameOver(){
-//        b_cache.putValue("highestScore",String.valueOf(highestScore));
         update(highestScore,level);
         stopTimer();
         //创建弹窗
@@ -255,11 +359,18 @@ public class MainActivity extends AppCompatActivity {
                 randColor=random.nextInt(5)+1;
                 nextRand=random.nextInt(19);
                 nextRandColor=random.nextInt(5)+1;
+//---------------------------------------------------------------
+                direction=12;
+                snakeBody.clear();
+                for(int i=4;i<=6;i++)
+                    snakeBody.addLast(new S_node(i,7));
+//---------------------------------------------------------------
 
                 timer=new Timer();
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
+                        status=0;
                         handler.sendEmptyMessage(0);
                     }
                 },0,timeInterval);
@@ -301,6 +412,13 @@ public class MainActivity extends AppCompatActivity {
         b_next_view=findViewById(R.id.b_next_view);
         btn_pause=findViewById(R.id.pause);
 
+// -----------------------------------------------------
+        s_btn_down=findViewById(R.id.s_btn_down);
+        s_btn_left=findViewById(R.id.s_btn_left);
+        s_btn_right=findViewById(R.id.s_btn_right);
+        s_btn_up=findViewById(R.id.s_btn_up);
+//------------------------------------------------------
+
         for (int i=0;i<10;i++){
             for (int j=0;j<15;j++){
                 blockList.add(0);
@@ -337,9 +455,19 @@ public class MainActivity extends AppCompatActivity {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                status=0;
                 handler.sendEmptyMessage(0);
             }
         },0,timeInterval);
+
+// ---------------------------------------------------------
+        snakeBody = new LinkedList<>();
+        for(int i=4;i<=6;i++)
+            snakeBody.addLast(new S_node(i,7));
+        status=0;
+        direction=12;
+        food=S_food();
+//-----------------------------------------------------------
     }
 
     //移动按钮监听事件
@@ -364,7 +492,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 position[1]--;
-                handler.sendEmptyMessage(1);
+                status=1;
+             //   handler.sendEmptyMessage(1);
             }
         });
         //方块右移按钮
@@ -385,7 +514,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 position[1]++;
-                handler.sendEmptyMessage(1);
+                status=1;
+                //handler.sendEmptyMessage(1);
             }
         });
         //方块旋转按钮
@@ -407,7 +537,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 rand=nextB;
-                handler.sendEmptyMessage(1);
+                status=1;
+               // handler.sendEmptyMessage(1);
             }
         });
         //方块下移按钮
@@ -435,10 +566,51 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }else{
                     position[0]+=down;
-                    handler.sendEmptyMessage(0);
+                    status=0;
+                   // handler.sendEmptyMessage(0);
                 }
             }
         });
+        //------------------------------------------------------------------------------
+        //蛇上移按钮
+        s_btn_up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(direction!=11&&direction!=10) {
+                    direction = 10;
+                    handler.sendEmptyMessage(10);
+                }
+            }
+        });
+        //蛇下移按钮
+        s_btn_down.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(direction!=10&&direction!=11) {
+                    direction = 11;
+                    handler.sendEmptyMessage(11);
+                }
+            }
+        });
+        s_btn_left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(direction!=13&&direction!=12) {
+                    direction = 12;
+                    handler.sendEmptyMessage(12);
+                }
+            }
+        });
+        s_btn_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(direction!=12&&direction!=13) {
+                    direction = 13;
+                    handler.sendEmptyMessage(13);
+                }
+            }
+        });
+//-----------------------------------------------------------------------------------
         //暂停按钮
         btn_pause.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -26,9 +26,9 @@
             android:textSize="20sp"
             android:ellipsize="middle"/>
     </ViewFlipper>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:background="@drawable/star_g"
         android:id="@+id/user_picture"
         android:layout_below="@id/btn_back"
@@ -46,7 +46,6 @@
         android:layout_height="wrap_content"
         android:text="简单"
         android:textSize="30sp"
-        android:layout_gravity="center"
         android:layout_marginTop="50dp"
         android:id="@+id/btn_easy"
         android:layout_below="@id/user_name"
@@ -56,7 +55,6 @@
         android:layout_height="wrap_content"
         android:text="普通"
         android:textSize="30sp"
-        android:layout_gravity="center"
         android:layout_marginTop="50dp"
         android:id="@+id/btn_ordinary"
         android:layout_below="@id/btn_easy"
@@ -66,7 +64,6 @@
         android:layout_height="wrap_content"
         android:text="困难"
         android:textSize="30sp"
-        android:layout_gravity="center"
         android:layout_marginTop="50dp"
         android:id="@+id/btn_hard"
         android:layout_below="@id/btn_ordinary"
@@ -76,7 +73,6 @@
         android:layout_height="wrap_content"
         android:text="噩梦"
         android:textSize="30sp"
-        android:layout_gravity="center"
         android:layout_marginTop="50dp"
         android:id="@+id/btn_other"
         android:layout_below="@id/btn_hard"

@@ -5,15 +5,32 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class UserInformation extends AppCompatActivity {
     TextView easy_score,ordinary_score,hard_score,other_score,user_name;
+    Bitmap head;
+    ImageView im_h;
+    private static String path = "/sdcard/myHead/";
     SQLiteDatabase db;
     DBhelper dBhelper;
     Button chang_name,btn_back;
@@ -56,6 +73,8 @@ public class UserInformation extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        initView();
+        initListener();
     }
     public void changeName(){
         final changeName c=new changeName(UserInformation.this);
@@ -112,5 +131,92 @@ public class UserInformation extends AppCompatActivity {
             }
         }).create();
         builder.show();
+    }
+
+    public void initView(){
+        im_h=findViewById(R.id.user_picture);
+        Bitmap bt = BitmapFactory.decodeFile(path + "head.jpg");// 从SD卡中找头像，转换成Bitmap
+        if (bt != null) {
+            @SuppressWarnings("deprecation")
+            Drawable drawable = new BitmapDrawable(bt);// 转换成drawable
+            im_h.setImageDrawable(drawable);
+        }
+    }
+
+    public void initListener(){
+        im_h.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.user_picture:// 更换头像
+                        Intent intent1 = new Intent(Intent.ACTION_PICK, null);
+                        intent1.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                        startActivityForResult(intent1, 1);
+                        break;
+                }
+            }
+        });
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode) {
+            case 1:
+                if (resultCode == RESULT_OK) {
+                    cropPhoto(data.getData());// 裁剪图片
+                }
+                break;
+            case 2:
+                if (data != null) {
+                    Bundle extras = data.getExtras();
+                    head = extras.getParcelable("data");
+                    if (head != null) {
+                        setPicToView(head);// 保存在SD卡中
+                        im_h.setImageBitmap(head);// 用ImageView显示出来
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void cropPhoto(Uri uri){
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        // aspectX aspectY 是宽高的比例
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        // outputX outputY 是裁剪图片宽高
+        intent.putExtra("outputX", 70);
+        intent.putExtra("outputY", 70);
+        intent.putExtra("return-data", true);
+        startActivityForResult(intent, 2);
+    }
+
+    private void setPicToView(Bitmap bitmap){
+        String sdStatus = Environment.getExternalStorageState();
+        if (!sdStatus.equals(Environment.MEDIA_MOUNTED)) { // 检测sd是否可用
+            return;
+        }
+        FileOutputStream b = null;
+        File file = new File(path);
+        file.mkdirs();// 创建文件夹
+        String fileName = path + "head.jpg";// 图片名字
+        try {
+            b = new FileOutputStream(fileName);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);// 把数据写入文件
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // 关闭流
+                b.flush();
+                b.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

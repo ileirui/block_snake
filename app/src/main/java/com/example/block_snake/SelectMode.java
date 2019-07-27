@@ -2,16 +2,20 @@ package com.example.block_snake;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class SelectMode extends AppCompatActivity {
-    Button btn_dj,btn_picture,btn_back;
+    Button btn_dj,btn_back;
     TextView user_name;
+    ImageView btn_picture;
     UserInformation u=new UserInformation();
     @Override
     protected void onCreate(Bundle savedInstanceState) {

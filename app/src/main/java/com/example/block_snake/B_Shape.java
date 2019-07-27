@@ -3,7 +3,7 @@ package com.example.block_snake;
 public class B_Shape {
     //block 的颜色
     public static int[] color=new int[]{
-            R.drawable.star_b,R.drawable.star_g,R.drawable.star_p,R.drawable.star_r,R.drawable.star_y
+            R.drawable.star_b,R.drawable.star_g,R.drawable.star_p,R.drawable.star_r,R.drawable.star_y,R.drawable.huaji,R.drawable.huaji1
     };
     //block 的形状
     public static int[][] shape=new int[][]{

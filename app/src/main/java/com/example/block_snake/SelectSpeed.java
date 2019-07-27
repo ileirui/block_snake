@@ -8,10 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class SelectSpeed extends AppCompatActivity implements View.OnClickListener {
-    Button btn_easy,btn_ordinary,btn_hard,btn_other,btn_user,btn_back;
+    Button btn_easy,btn_ordinary,btn_hard,btn_other,btn_back;
+    ImageView btn_user;
     UserInformation u=new UserInformation();
     TextView user_name;
 
