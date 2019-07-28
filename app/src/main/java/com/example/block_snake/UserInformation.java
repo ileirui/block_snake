@@ -219,4 +219,10 @@ public class UserInformation extends AppCompatActivity {
             }
         }
     }
+
+    public Bitmap getBitmip(){
+        String path="/sdcard/myHead/head.jpg";
+        Bitmap bitmap= BitmapFactory.decodeFile(path);
+        return bitmap;
+    }
 }

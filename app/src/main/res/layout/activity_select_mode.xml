@@ -31,7 +31,7 @@
     <ImageView
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:background="@drawable/star_g"
+        android:background="@drawable/huaji"
         android:id="@+id/user_picture"
         android:layout_below="@id/btn_back"
         android:layout_margin="20dp"/>

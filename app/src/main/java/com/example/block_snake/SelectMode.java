@@ -26,6 +26,7 @@ public class SelectMode extends AppCompatActivity {
         btn_back=findViewById(R.id.btn_back);
         user_name=findViewById(R.id.user_name);
         user_name.setText(u.getName(SelectMode.this));
+        btn_picture.setImageBitmap(u.getBitmip());
         btn_dj.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
