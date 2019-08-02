@@ -30,7 +30,9 @@ public class B_Shape {
             {0x4, 0x4, 0x4, 0x4},
             {0x0, 0xf, 0x0, 0x0},
             //田字形
-            {0xc, 0xc, 0x0, 0x0}
+            {0xc, 0xc, 0x0, 0x0},
+            //行消除道具
+            {0x0, 0x4, 0x0, 0x0}
     };
     //block  的初始位置,与上方的方块的形状对应
     public static int[][] initPosition=new int[][]{
@@ -56,10 +58,12 @@ public class B_Shape {
 
             {2, -3},
             {3, -1},
-            {2, -1}
+            {2, -1},
+
+            {3,-1}
     };
     //block  变换后的下一个形状 如shape[0] 为L形状，若想旋转后得到反L(shape[4]) 则可表示为 shape[nextshape[7]]
     public static int[] nextshape=new int[]{
-            1, 2, 3, 0, 5, 6, 7, 4, 9, 8, 11, 10, 13, 14, 15, 12, 17, 16, 18
+            1, 2, 3, 0, 5, 6, 7, 4, 9, 8, 11, 10, 13, 14, 15, 12, 17, 16, 18, 19
     };
 }

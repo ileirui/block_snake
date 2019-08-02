@@ -29,5 +29,6 @@
         android:text="游客登录"
         android:id="@+id/btn_login"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true"
+        android:background="@drawable/btn_bw"/>
 </RelativeLayout>

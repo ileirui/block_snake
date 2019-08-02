@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     Random random;           //随机变量
     int[] position=new int[]{-4,4};  //方块位置，position[0]为y轴位置
     Timer timer;             //时间变量
-    Button b_btn_up,b_btn_down,b_btn_left,b_btn_right,s_btn_up,s_btn_down,s_btn_left,s_btn_right,btn_pause;  //移动按钮
+    Button b_btn_up,b_btn_down,b_btn_left,b_btn_right,s_btn_up,s_btn_down,s_btn_left,s_btn_right,btn_pause,btn_setting;  //移动按钮
     //画布的格子数为10x15；
     int ySize=15;
     int xSize=10;
@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i=ySize-1;i>0;){
             //判断这一行是否已满
             if (allBlock[i]==0x3ff){
-                score++;
+                score+=10;
                 t_score.setText("分数: "+score);
                 for (int j=i-1;j>0;j--){
                     //满的话消除方块，剩下的方块顺序下降
@@ -276,7 +276,6 @@ public class MainActivity extends AppCompatActivity {
         //若最后一行也满了，则游戏失败，保存数据
         if (allBlock[0]!=0){
             if (score>highestScore){
-//                b_cache.getValue("highestScore",score+"");
                 highestScore=score;
                 t_highestScore.setText("最高分: "+highestScore);
                 t_score.setText("分数: "+score);
@@ -289,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
         position[1]=B_Shape.initPosition[rand][0];
         randColor=nextRandColor;
 
-        nextRand=random.nextInt(19);
+        nextRand=random.nextInt(20);
         nextRandColor=random.nextInt(5)+1;
         nextBlockShow();
     }
@@ -353,11 +352,11 @@ public class MainActivity extends AppCompatActivity {
                         b_color[i][j]=0;
                     }
                 }
-                rand=random.nextInt(19);
+                rand=random.nextInt(20);
                 position[0]=B_Shape.initPosition[rand][1];
                 position[1]=B_Shape.initPosition[rand][0];
                 randColor=random.nextInt(5)+1;
-                nextRand=random.nextInt(19);
+                nextRand=random.nextInt(20);
                 nextRandColor=random.nextInt(5)+1;
 //---------------------------------------------------------------
                 direction=12;
@@ -411,6 +410,7 @@ public class MainActivity extends AppCompatActivity {
         b_s_view=findViewById(R.id.b_s_view);
         b_next_view=findViewById(R.id.b_next_view);
         btn_pause=findViewById(R.id.pause);
+        btn_setting=findViewById(R.id.setting);
 
 // -----------------------------------------------------
         s_btn_down=findViewById(R.id.s_btn_down);
@@ -430,11 +430,11 @@ public class MainActivity extends AppCompatActivity {
         b_s_view.setAdapter(block);
 
         random=new Random();
-        rand=random.nextInt(19);
+        rand=random.nextInt(20);
         position[0]=B_Shape.initPosition[rand][1];
         position[1]=B_Shape.initPosition[rand][0];
         randColor=random.nextInt(5)+1;
-        nextRand=random.nextInt(19);
+        nextRand=random.nextInt(20);
         nextRandColor=random.nextInt(5)+1;
         blockNextList.clear();
 
@@ -618,6 +618,14 @@ public class MainActivity extends AppCompatActivity {
                 pause();
             }
         });
+        //设置按钮
+        btn_setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pause();
+                setting();
+            }
+        });
     }
 
     //选择难度
@@ -729,6 +737,28 @@ public class MainActivity extends AppCompatActivity {
             btn_pause.setBackground(st);
         }
         p=!p;
+    }
+
+    //设置
+    public void setting(){
+        final setting s=new setting(MainActivity.this);
+        s.setTitle("设置");
+        s.show();
+        s.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if (s.music=="begin"){
+                    pause();
+                }
+                else if (s.music=="end"){
+                    pause();
+                }
+                else{
+                    Intent intent=new Intent(MainActivity.this,SelectSpeed.class);
+                    startActivity(intent);
+                }
+            }
+        });
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {

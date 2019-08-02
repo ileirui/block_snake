@@ -5,11 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".UserInformation">
-    <Button
-        android:id="@+id/btn_back"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:background="@drawable/back" />
+
     <ViewFlipper
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,6 +21,11 @@
             android:textSize="20sp"
             android:ellipsize="middle"/>
     </ViewFlipper>
+    <Button
+        android:id="@+id/btn_back"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/back" />
 
     <ImageView
         android:id="@+id/user_picture"
