@@ -24,7 +24,8 @@
         android:layout_gravity="center_horizontal"
         android:id="@+id/b_next_view"
         android:layout_toRightOf="@id/b_s_view"
-        android:layout_marginLeft="20dp">
+        android:layout_alignLeft="@id/score"
+        android:layout_below="@id/pause">
     </GridView>
 
     <TextView
@@ -136,17 +137,18 @@
         android:layout_alignLeft="@id/s_btn_up"
         android:layout_alignRight="@id/s_btn_up"/>
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:id="@+id/setting"
-        android:layout_toRightOf="@id/b_next_view"/>
+        android:layout_toRightOf="@id/pause"
+        android:background="@drawable/setting"/>
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:id="@+id/pause"
-        android:layout_toRightOf="@id/b_next_view"
-        android:layout_below="@id/setting"
-        android:background="@drawable/start"/>
+        android:layout_toRightOf="@id/b_s_view"
+        android:background="@drawable/start"
+        android:layout_alignLeft="@id/b_next_view"/>
     <ViewFlipper
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

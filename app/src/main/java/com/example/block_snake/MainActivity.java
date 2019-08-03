@@ -749,9 +749,15 @@ public class MainActivity extends AppCompatActivity {
             public void onDismiss(DialogInterface dialog) {
                 if (s.music=="begin"){
                     pause();
+                    Intent intent=new Intent(MainActivity.this,MusicService.class);
+                    intent.putExtra("floge",0);
+                    startService(intent);
                 }
                 else if (s.music=="end"){
                     pause();
+                    Intent intent=new Intent(MainActivity.this,MusicService.class);
+                    intent.putExtra("floge",1);
+                    startService(intent);
                 }
                 else{
                     Intent intent=new Intent(MainActivity.this,SelectSpeed.class);
@@ -769,5 +775,7 @@ public class MainActivity extends AppCompatActivity {
         init();
         select(level);
         btn_Move();
+        Intent intent=new Intent(MainActivity.this,MusicService.class);
+        startService(intent);
     }
 }
