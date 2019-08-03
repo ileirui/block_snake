@@ -380,6 +380,9 @@ public class MainActivity extends AppCompatActivity {
         builder.setNegativeButton("退出", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Intent intent1=new Intent(MainActivity.this,MusicService.class);
+                intent1.putExtra("floge",1);
+                startService(intent1);
                 finish();
             }
         }).create();
@@ -622,7 +625,8 @@ public class MainActivity extends AppCompatActivity {
         btn_setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pause();
+                if (!p)
+                    pause();
                 setting();
             }
         });
@@ -762,6 +766,9 @@ public class MainActivity extends AppCompatActivity {
                 else{
                     Intent intent=new Intent(MainActivity.this,SelectSpeed.class);
                     startActivity(intent);
+                    Intent intent1=new Intent(MainActivity.this,MusicService.class);
+                    intent1.putExtra("floge",1);
+                    startService(intent1);
                 }
             }
         });

@@ -21,8 +21,10 @@ public class MusicService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getIntExtra("floge",0)==0)
+        if (intent.getIntExtra("floge",0)==0) {
             mediaPlayer.start();
+            mediaPlayer.setLooping(true);
+        }
         else
             mediaPlayer.pause();
         return super.onStartCommand(intent, flags, startId);
