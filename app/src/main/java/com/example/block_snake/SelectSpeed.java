@@ -29,7 +29,8 @@ public class SelectSpeed extends AppCompatActivity implements View.OnClickListen
         btn_back=findViewById(R.id.btn_back);
         user_name=findViewById(R.id.user_name);
         user_name.setText(u.getName(SelectSpeed.this));
-        btn_user.setImageBitmap(u.getBitmip());
+        if (u.getBitmip()!=null)
+            btn_user.setImageBitmap(u.getBitmip());
 
         btn_easy.setOnClickListener(this);
         btn_ordinary.setOnClickListener(this);
