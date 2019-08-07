@@ -793,6 +793,10 @@ public class MainActivity extends AppCompatActivity {
             b_btn_up.setEnabled(false);
             b_btn_right.setEnabled(false);
             b_btn_left.setEnabled(false);
+            s_btn_down.setEnabled(false);
+            s_btn_left.setEnabled(false);
+            s_btn_right.setEnabled(false);
+            s_btn_up.setEnabled(false);
             btn_pause.setBackground(pa);
         }
         else {
@@ -801,6 +805,10 @@ public class MainActivity extends AppCompatActivity {
             b_btn_up.setEnabled(true);
             b_btn_right.setEnabled(true);
             b_btn_left.setEnabled(true);
+            s_btn_down.setEnabled(true);
+            s_btn_left.setEnabled(true);
+            s_btn_right.setEnabled(true);
+            s_btn_up.setEnabled(true);
             btn_pause.setBackground(st);
         }
         p=!p;

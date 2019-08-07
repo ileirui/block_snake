@@ -13,12 +13,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CreateRoom"></activity>
-        <activity android:name=".UserInformation" />
-        <activity android:name=".SelectSpeed" />
-        <activity android:name=".SelectMode" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".Login">
+        <activity android:name=".CreateRoom"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".UserInformation"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".SelectSpeed"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".SelectMode"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Login"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
