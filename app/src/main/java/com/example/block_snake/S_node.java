@@ -1,6 +1,9 @@
 package com.example.block_snake;
 
-public class S_node {
+import java.io.Serializable;
+
+public class S_node implements Serializable {
+    private static final long serialVersionUID= -34975938475934935L;
     private int nodeX;
     private int nodeY;
 

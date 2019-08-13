@@ -17,6 +17,7 @@ public class SelectMode extends AppCompatActivity {
     TextView user_name;
     ImageView btn_picture;
     UserInformation u=new UserInformation();
+    public static int intnetMode=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +33,7 @@ public class SelectMode extends AppCompatActivity {
         btn_dj.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                intnetMode=0;
                 Intent intent=new Intent(SelectMode.this,SelectSpeed.class);
                 startActivity(intent);
             }
@@ -53,6 +55,7 @@ public class SelectMode extends AppCompatActivity {
         btn_lianji.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                intnetMode=1;
                 Intent intent=new Intent(SelectMode.this,CreateRoom.class);
                 startActivity(intent);
             }

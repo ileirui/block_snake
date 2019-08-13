@@ -5,18 +5,29 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
+import android.net.nsd.NsdManager;
+import android.net.nsd.NsdServiceInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,7 +62,14 @@ public class MainActivity extends AppCompatActivity {
     int status=0;
     boolean refresh=true;
 
-//-----------------------------------------------------
+    CreateRoom createRoom = new CreateRoom();
+
+    ServerSocket mServerSocket;
+    public Thread server=null;
+    public Thread client=null;
+    public Socket socket;
+
+    //-----------------------------------------------------
 
     int randColor;           //随机颜色
     int rand;
@@ -60,12 +78,18 @@ public class MainActivity extends AppCompatActivity {
     DBhelper dBhelper;
     boolean p=false;   //暂停按钮控制变量
 
+
     //方块下落线程
     Handler handler=new Handler(){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            if(refresh) {
+                for (S_node node : snakeBody)
+                    blockList.set(node.getNodeY() * xSize + node.getNodeX(), 7);
+                blockList.set(snakeBody.getFirst().getNodeY() * xSize + snakeBody.getFirst().getNodeX(), 6);
 
+            }
             //将下落完成的方块存入blockList中
             for (int i = 0; i < ySize; i++) {
                 if (allBlock[i] == 0) {
@@ -134,96 +158,101 @@ public class MainActivity extends AppCompatActivity {
 
 
             //---------------------------------------------------------------------------------------------------------
+
             blockList.set(food.getNodeY()*xSize+food.getNodeX(),7);
-            switch (direction){
-                case 13:
-                    snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() + 1, snakeBody.getFirst().getNodeY()));
-                    if (snakeBody.getFirst().getNodeX() > 9) {
-                        if (score>getHighestScore(level)){
-                            highestScore=score;
-                            t_highestScore.setText("最高分: "+highestScore);
-                            t_score.setText("分数: "+score);
+            if(CreateRoom.Mode!=0) {
+                switch (direction) {
+                    case 13:
+                        snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() + 1, snakeBody.getFirst().getNodeY()));
+                        if (snakeBody.getFirst().getNodeX() > 9) {
+                            if (score > getHighestScore(level)) {
+                                highestScore = score;
+                                t_highestScore.setText("最高分: " + highestScore);
+                                t_score.setText("分数: " + score);
+                            }
+                            gameOver();
                         }
-                        gameOver();
-                    }
-                    if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX() )) != 0)
-                    {
-                        snakeBody.removeLast();
-                        allBlock[snakeBody.getFirst().getNodeY()]-=(int)Math.pow(2, snakeBody.getFirst().getNodeX() );
-                       // blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
-                        b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()]=0;
-                    }
-                    S_eat();
-                    break;
-                case 12:
-                    snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() - 1, snakeBody.getFirst().getNodeY()));
-                    if (snakeBody.getFirst().getNodeX() < 0) {
-                        if (score > getHighestScore(level)) {
-                            highestScore = score;
-                            t_highestScore.setText("最高分: " + highestScore);
-                            t_score.setText("分数: " + score);
+                        if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
+                            snakeBody.removeLast();
+                            allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
+                            // blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
+                            b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
                         }
-                        gameOver();
-                    }
-                    if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX() )) != 0)
-                    {
-                        snakeBody.removeLast();
-                        allBlock[snakeBody.getFirst().getNodeY()]-=(int) Math.pow(2, snakeBody.getFirst().getNodeX() );
-                        //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
-                        b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()]=0;
-                    }
-                    S_eat();
-                    break;
-                case 10:
-                    snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() - 1));
-                    if (snakeBody.getFirst().getNodeY() < 0) {
-                        if (score>getHighestScore(level)){
-                            highestScore=score;
-                            t_highestScore.setText("最高分: "+highestScore);
-                            t_score.setText("分数: "+score);
+                        S_eat();
+                        break;
+                    case 12:
+                        snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() - 1, snakeBody.getFirst().getNodeY()));
+                        if (snakeBody.getFirst().getNodeX() < 0) {
+                            if (score > getHighestScore(level)) {
+                                highestScore = score;
+                                t_highestScore.setText("最高分: " + highestScore);
+                                t_score.setText("分数: " + score);
+                            }
+                            gameOver();
                         }
-                        gameOver();
-                    }
-                    else {
-                        if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0)
-                        {
+                        if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
                             snakeBody.removeLast();
                             allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
                             //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
-                            b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()]=0;
+                            b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
                         }
-                    }
-                    S_eat();
-                    break;
-                case 11:
-                    snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() + 1));
-                    if (snakeBody.getFirst().getNodeY() > 14) {
-                        if (score>getHighestScore(level)){
-                            highestScore=score;
-                            t_highestScore.setText("最高分: "+highestScore);
-                            t_score.setText("分数: "+score);
+                        S_eat();
+                        break;
+                    case 10:
+                        snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() - 1));
+                        if (snakeBody.getFirst().getNodeY() < 0) {
+                            if (score > getHighestScore(level)) {
+                                highestScore = score;
+                                t_highestScore.setText("最高分: " + highestScore);
+                                t_score.setText("分数: " + score);
+                            }
+                            gameOver();
+                        } else {
+                            if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
+                                snakeBody.removeLast();
+                                allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
+                                //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
+                                b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
+                            }
                         }
-                        gameOver();
-                    }
-                    else {
-                        if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0)
-                        {
-                            snakeBody.removeLast();
-                            allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
-                            //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
-                            b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()]=0;
+                        S_eat();
+                        break;
+                    case 11:
+                        snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() + 1));
+                        if (snakeBody.getFirst().getNodeY() > 14) {
+                            if (score > getHighestScore(level)) {
+                                highestScore = score;
+                                t_highestScore.setText("最高分: " + highestScore);
+                                t_score.setText("分数: " + score);
+                            }
+                            gameOver();
+                        } else {
+                            if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
+                                snakeBody.removeLast();
+                                allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
+                                //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
+                                b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
+                            }
                         }
-                    }
-                    S_eat();
-                    break;
-
+                        S_eat();
+                        break;
+                }
             }
-
+            if(SelectMode.intnetMode==1&&CreateRoom.Mode==1){
+            client=new Thread(ClientListener);
+            client.start();
+            }
+            if(SelectMode.intnetMode==1&&CreateRoom.Mode==0&&server==null){
+                mServerSocket=CreateRoom.mServerSocket;
+                server=new Thread(ServerListener);
+                server.start();
+            }
 
             if(refresh) {
                 for (S_node node : snakeBody)
                     blockList.set(node.getNodeY() * xSize + node.getNodeX(), 7);
                 blockList.set(snakeBody.getFirst().getNodeY() * xSize + snakeBody.getFirst().getNodeX(), 6);
+
             }
             //---------------------------------------------------------------------------------------------------------------
 
@@ -254,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
             snakeBody.removeLast();
     }
     //---------------------------------------------
+
     //---------------------------------------------
     //食物生成函数
     S_node S_food(){
@@ -262,6 +292,7 @@ public class MainActivity extends AppCompatActivity {
         return foodrandom;
     }
     //---------------------------------------------
+
     //移位函数
     int leftMath(int a,int b){
         if (b<0)
@@ -844,6 +875,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    //联网设置
+    public void Inetnet(){
+        if(createRoom.Mode==0){
+            s_btn_right.setEnabled(false);
+            s_btn_down.setEnabled(false);
+            s_btn_up.setEnabled(false);
+            s_btn_left.setEnabled(false);
+        }
+        if(createRoom.Mode==1){
+            b_btn_down.setEnabled(false);
+            b_btn_left.setEnabled(false);
+            b_btn_right.setEnabled(false);
+            b_btn_up.setEnabled(false);
+        }
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -851,9 +899,58 @@ public class MainActivity extends AppCompatActivity {
         dBhelper=new DBhelper(this);
         changeLevel();
         init();
+        if(SelectMode.intnetMode==1)
+            Inetnet();
         select(level);
         btn_Move();
         Intent intent=new Intent(MainActivity.this,MusicService.class);
         startService(intent);
     }
+
+
+    public Runnable ClientListener = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                long getNowTimeLong = System.currentTimeMillis();
+                    SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss:SSS-E-F");
+                    String string = time.format(getNowTimeLong);
+                if(socket==null)
+                    socket = new Socket(CreateRoom.ServerIP,CreateRoom.ServerPort);
+                S_snake s_snake=new S_snake();
+                s_snake.setLinkedList(snakeBody,string);
+                ObjectOutputStream objectOutputStream=null;
+                objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
+                 objectOutputStream.writeObject(s_snake);
+                objectOutputStream.flush();
+                socket.close();
+                socket=null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    };
+
+    public Runnable ServerListener = new Runnable() {
+        @Override
+        public void run() {
+
+            try {
+                while(true) {
+                    Socket socket = mServerSocket.accept();
+                    ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+                    S_snake s_snake=new S_snake();
+                    s_snake = (S_snake) objectInputStream.readObject();
+                    snakeBody=s_snake.getLinkedList();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        }
+    };
 }
