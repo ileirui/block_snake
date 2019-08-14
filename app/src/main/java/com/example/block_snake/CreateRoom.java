@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -44,27 +45,12 @@ public class CreateRoom extends AppCompatActivity {
     NsdManager.ResolveListener nsResolveListener;
 
     public Thread waitclient=null;
+    public Thread change=null;
     public static InetAddress ServerIP;
     public static int ServerPort;
     int c=0,destory=0;
     boolean canrun=true;
-    Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if(msg.what==0){
-                c++;
-                if(c%10==0)
-                btn_create.setText(String.valueOf(c/10));
-            }
-                else{
-                Intent intent=new Intent(CreateRoom.this,MainActivity.class);
-                intent.putExtra("level",1);
-                startActivity(intent);
-                }
-            //Toast.makeText(getApplicationContext(),"等待",Toast.LENGTH_SHORT).show();
-        }
-    };
+    S_snake s_snake=new S_snake();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +62,7 @@ public class CreateRoom extends AppCompatActivity {
         btn_picture=findViewById(R.id.user_picture);
         user_name.setText(u.getName(CreateRoom.this));
         btn_picture.setImageBitmap(u.getBitmip());
+
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,6 +79,8 @@ public class CreateRoom extends AppCompatActivity {
                 nsdServiceInfo.setServiceType("_http._tcp.");
                 nsdServiceInfo.setPort(mLocalPort);
                 initializeServerSocket();
+                change = new Thread(ServerListener);
+                change.start();
                 waitclient = new Thread(WaitClient);
                 waitclient.start();
             }
@@ -115,9 +104,6 @@ public class CreateRoom extends AppCompatActivity {
                 nsdServiceInfo.setPort(mLocalPort);
                 discoverService();
                 initResolveListener();
-                Intent intent=new Intent(CreateRoom.this,MainActivity.class);
-                intent.putExtra("level",1);
-                startActivity(intent);
             }
         });
 
@@ -141,12 +127,29 @@ public class CreateRoom extends AppCompatActivity {
         });
     }
 
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if(msg.what==0){
+                c++;
+                if(c%10==0)
+                    btn_create.setText(String.valueOf(c/10));
+            }
+            else if(msg.what==1){
+                Intent intent=new Intent(CreateRoom.this,MainActivity.class);
+                intent.putExtra("level",1);
+                startActivity(intent);
+            }
+        }
+    };
+
     public Runnable WaitClient = new Runnable() {
         @Override
         public void run() {
             while (canrun) {
                 destory=0;
-                while (S_snake.name != "snake") {
+                while (!s_snake.getName().equals("snake")) {
                     destory++;
                     try {
                         Message message = Message.obtain();
@@ -156,14 +159,40 @@ public class CreateRoom extends AppCompatActivity {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if(destory==100)
+                    if(destory==10)
                         break;
                 }
-                if(destory!=100){
+                if(s_snake.getName().equals("snake")){
                 Message message1 = Message.obtain();
                 message1.what = 1;
-                handler.sendMessage(message1);}
+                handler.sendMessage(message1);
+                break;
+                }
             }
+        }
+    };
+
+    public  Runnable ServerListener = new Runnable() {
+        @Override
+        public void run() {
+
+            try {
+                while(true) {
+                    Socket socket = mServerSocket.accept();
+                    ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+                    s_snake = (S_snake) objectInputStream.readObject();
+                    if(s_snake.getName().equals("snake")){
+                        break;
+                    }
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
         }
     };
     public void onBackPressed() {
@@ -254,13 +283,29 @@ public class CreateRoom extends AppCompatActivity {
         nsdManager.discoverServices("_http._tcp", NsdManager.PROTOCOL_DNS_SD,nsDicListener);
     }
 
+    Handler handler_client=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            ServerIP=null;
+            NsdServiceInfo info;
+            info=(NsdServiceInfo) msg.obj;
+            ServerPort=info.getPort();
+            ServerIP=info.getHost();
+            if(ServerIP!=null){
+                Intent intent=new Intent(CreateRoom.this,MainActivity.class);
+                intent.putExtra("level",1);
+                startActivity(intent);
+           }
+        }
+    };
     public void initResolveListener() {
         nsResolveListener = new NsdManager.ResolveListener() {
             @Override
             public void onServiceResolved(NsdServiceInfo arg0) {
                 Message message=Message.obtain();
-                ServerPort=arg0.getPort();
-                ServerIP=arg0.getHost();
+                message.obj=arg0;
+                handler_client.sendMessage(message);
                 // 可以再这里获取相应网络服务的地址及端口信息，然后决定是否要与之建立连接。
                 // 之后就是一些socket操作了
             }

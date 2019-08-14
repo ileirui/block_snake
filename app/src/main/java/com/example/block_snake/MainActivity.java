@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     ServerSocket mServerSocket;
     public Thread server=null;
     public Thread client=null;
-    public Socket socket;
+    public Socket socket=null;
 
     //-----------------------------------------------------
 
@@ -521,6 +521,16 @@ public class MainActivity extends AppCompatActivity {
         nextBlock=new B_Adapter(MainActivity.this,blockNextList,R.layout.layout);
         b_next_view.setAdapter(nextBlock);
 
+
+
+        // ---------------------------------------------------------
+        snakeBody = new LinkedList<>();
+        for(int i=4;i<=6;i++)
+            snakeBody.addLast(new S_node(i,7));
+        status=0;
+        direction=12;
+        food=S_food();
+       //-----------------------------------------------------------
         timer=new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -530,14 +540,7 @@ public class MainActivity extends AppCompatActivity {
             }
         },0,timeInterval);
 
-// ---------------------------------------------------------
-        snakeBody = new LinkedList<>();
-        for(int i=4;i<=6;i++)
-            snakeBody.addLast(new S_node(i,7));
-        status=0;
-        direction=12;
-        food=S_food();
-//-----------------------------------------------------------
+
     }
 
     //移动按钮监听事件
@@ -912,15 +915,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             try {
-                long getNowTimeLong = System.currentTimeMillis();
-                    SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss:SSS-E-F");
-                    String string = time.format(getNowTimeLong);
                 if(socket==null)
-                    socket = new Socket(CreateRoom.ServerIP,CreateRoom.ServerPort);
-                S_snake s_snake=new S_snake();
-                s_snake.setLinkedList(snakeBody,string);
+                   socket = new Socket(CreateRoom.ServerIP,CreateRoom.ServerPort);
+                    //socket = new Socket("192.168.232.2",56562);
                 ObjectOutputStream objectOutputStream=null;
                 objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
+                S_snake s_snake=new S_snake();
+                s_snake.setLinkedList(snakeBody,"snake");
                  objectOutputStream.writeObject(s_snake);
                 objectOutputStream.flush();
                 socket.close();
@@ -932,7 +933,7 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
-    public Runnable ServerListener = new Runnable() {
+    public  Runnable ServerListener = new Runnable() {
         @Override
         public void run() {
 
@@ -940,8 +941,7 @@ public class MainActivity extends AppCompatActivity {
                 while(true) {
                     Socket socket = mServerSocket.accept();
                     ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-                    S_snake s_snake=new S_snake();
-                    s_snake = (S_snake) objectInputStream.readObject();
+                    S_snake s_snake = (S_snake) objectInputStream.readObject();
                     snakeBody=s_snake.getLinkedList();
                 }
             } catch (IOException e) {
