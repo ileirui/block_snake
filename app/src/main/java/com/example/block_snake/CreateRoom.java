@@ -62,7 +62,9 @@ public class CreateRoom extends AppCompatActivity {
         btn_picture=findViewById(R.id.user_picture);
         user_name.setText(u.getName(CreateRoom.this));
         btn_picture.setImageBitmap(u.getBitmip());
-
+        waitclient=null;
+        change=null;
+        nsRegListener=null;
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,11 +80,15 @@ public class CreateRoom extends AppCompatActivity {
                 nsdServiceInfo.setServiceName("NSD_Test_Program");
                 nsdServiceInfo.setServiceType("_http._tcp.");
                 nsdServiceInfo.setPort(mLocalPort);
+                if(nsRegListener==null)
                 initializeServerSocket();
+                if(change==null){
                 change = new Thread(ServerListener);
-                change.start();
+                change.start();}
+                if(waitclient==null){
                 waitclient = new Thread(WaitClient);
-                waitclient.start();
+                waitclient.start();}
+                btn_join.setEnabled(false);
             }
         });
 
@@ -118,13 +124,13 @@ public class CreateRoom extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        btn_picture.setOnClickListener(new View.OnClickListener() {
+        /*btn_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(CreateRoom.this,UserInformation.class);
                 startActivity(intent);
             }
-        });
+        });*/
     }
 
     Handler handler = new Handler(){

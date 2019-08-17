@@ -84,12 +84,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if(refresh) {
-                for (S_node node : snakeBody)
-                    blockList.set(node.getNodeY() * xSize + node.getNodeX(), 7);
-                blockList.set(snakeBody.getFirst().getNodeY() * xSize + snakeBody.getFirst().getNodeX(), 6);
-
-            }
             //将下落完成的方块存入blockList中
             for (int i = 0; i < ySize; i++) {
                 if (allBlock[i] == 0) {
@@ -158,9 +152,8 @@ public class MainActivity extends AppCompatActivity {
 
 
             //---------------------------------------------------------------------------------------------------------
-
-            blockList.set(food.getNodeY()*xSize+food.getNodeX(),7);
             if(CreateRoom.Mode!=0) {
+
                 switch (direction) {
                     case 13:
                         snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() + 1, snakeBody.getFirst().getNodeY()));
@@ -254,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
                 blockList.set(snakeBody.getFirst().getNodeY() * xSize + snakeBody.getFirst().getNodeX(), 6);
 
             }
+            blockList.set(food.getNodeY()*xSize+food.getNodeX(),7);
             //---------------------------------------------------------------------------------------------------------------
 
             block.setmDatas(blockList);
@@ -487,6 +481,8 @@ public class MainActivity extends AppCompatActivity {
         s_btn_left=findViewById(R.id.s_btn_left);
         s_btn_right=findViewById(R.id.s_btn_right);
         s_btn_up=findViewById(R.id.s_btn_up);
+        server=null;
+        client=null;
 //------------------------------------------------------
 
         for (int i=0;i<10;i++){
@@ -910,19 +906,18 @@ public class MainActivity extends AppCompatActivity {
         startService(intent);
     }
 
-
     public Runnable ClientListener = new Runnable() {
         @Override
         public void run() {
             try {
                 if(socket==null)
                    socket = new Socket(CreateRoom.ServerIP,CreateRoom.ServerPort);
-                    //socket = new Socket("192.168.232.2",56562);
                 ObjectOutputStream objectOutputStream=null;
                 objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
                 S_snake s_snake=new S_snake();
                 s_snake.setLinkedList(snakeBody,"snake");
-                 objectOutputStream.writeObject(s_snake);
+                s_snake.setFood(food);
+                objectOutputStream.writeObject(s_snake);
                 objectOutputStream.flush();
                 socket.close();
                 socket=null;
@@ -943,6 +938,11 @@ public class MainActivity extends AppCompatActivity {
                     ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
                     S_snake s_snake = (S_snake) objectInputStream.readObject();
                     snakeBody=s_snake.getLinkedList();
+                    food=s_snake.getFood();
+                    if(refresh==false){
+                        mServerSocket=null;
+                        break;
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
