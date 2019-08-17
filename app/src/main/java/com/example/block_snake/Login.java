@@ -47,7 +47,7 @@ public class Login extends AppCompatActivity {
             startActivity(intent);
         } else {
             db=dBhelper.getWritableDatabase();
-            db.execSQL("insert into UserInfo(id,name,picture,easy,ordinary,hard,other)values(?,?,?,?,?,?,?)",new Object[]{id,name,picture,score,score,score,score});
+            db.execSQL("insert into UserInfo(id,name,picture,easy,ordinary,hard,other,more)values(?,?,?,?,?,?,?,?)",new Object[]{id,name,picture,score,score,score,score,score});
             db.close();
             Intent intent=new Intent(Login.this,SelectMode.class);
             startActivity(intent);

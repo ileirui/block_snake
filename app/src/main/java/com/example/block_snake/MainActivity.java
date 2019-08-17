@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
 import android.net.wifi.WifiInfo;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     GridView b_s_view,b_next_view;       //主画布及方块下一跳画布
     List<Integer> blockList=new ArrayList<>();   //方块列表
     List<Integer> blockNextList=new ArrayList<>();  //方块下一跳列表
+    MediaPlayer mediaPlayer;           //背景音乐
 
 //---------------------------------------------------
     LinkedList<S_node> snakeBody;
@@ -67,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
     ServerSocket mServerSocket;
     public Thread server=null;
     public Thread client=null;
-    public Socket socket=null;
 
     //-----------------------------------------------------
 
@@ -84,76 +85,76 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            //将下落完成的方块存入blockList中
-            for (int i = 0; i < ySize; i++) {
-                if (allBlock[i] == 0) {
-                    for (int j = 0; j < xSize; j++) {
-                        blockList.set(i * xSize + j, 0);
-                    }
-                } else {
-                    for (int j = 0; j < xSize; j++) {
-                        blockList.set(i * xSize + j, b_color[i][j]);
-                    }
-                }
-            }
-
-            //方块是否能继续向下移动
-            boolean canMove = true;
-            if (msg.what == 0) {
-                position[0]++;   //先下移一行，做后面的判断是否能下移，不能则返回
-                for (int i = 3; i >= 0; i--) {
-                    int line = i + position[0];
-                    if (line >= 0 && B_Shape.shape[rand][i] != 0) {
-                        //判断是否超行或者下面有方块
-                        if (line >= ySize || ((allBlock[line] & (leftMath(B_Shape.shape[rand][i], position[1]))) != 0)) {
-                            canMove = false;
-                            break;
-                        }
-                    }
-                }
-                if (!canMove) {
-                    position[0]--;   //上面进行了假设下移，所以此处要移回原位置
-                    for (int i = 3; i >= 0; i--) {
-                        int line = i + position[0];
-                        if (line >= 0 && B_Shape.shape[rand][i] != 0) {
-                            for (int j = 0; j < xSize; j++) {
-                                if (((1 << j) & (leftMath(B_Shape.shape[rand][i], position[1]))) != 0) {
-                                    blockList.set(line * xSize + j, randColor);
-                                }
-                            }
-                        }
-                    }
-                    stopDown();
-                } else {
-                    for (int i = 3; i >= 0; i--) {
-                        int line = i + position[0];
-                        if (line >= 0 && B_Shape.shape[rand][i] != 0) {
-                            for (int j = 0; j < xSize; j++) {
-                                if (((1 << j) & (leftMath(B_Shape.shape[rand][i], position[1]))) != 0) {
-                                    blockList.set(line * xSize + j, randColor);
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                for (int i = 3; i >= 0; i--) {
-                    int line = i + position[0];
-                    if (line >= 0 && B_Shape.shape[rand][i] != 0) {
+            if(!(CreateRoom.Mode==1&&SelectMode.intnetMode==1)) {
+                //将下落完成的方块存入blockList中
+                for (int i = 0; i < ySize; i++) {
+                    if (allBlock[i] == 0) {
                         for (int j = 0; j < xSize; j++) {
-                            if (((1 << j) & (leftMath(B_Shape.shape[rand][i], position[1]))) != 0) {
-                                blockList.set(line * xSize + j, randColor);
+                            blockList.set(i * xSize + j, 0);
+                        }
+                    } else {
+                        for (int j = 0; j < xSize; j++) {
+                            blockList.set(i * xSize + j, b_color[i][j]);
+                        }
+                    }
+                }
+
+                //方块是否能继续向下移动
+                boolean canMove = true;
+                if (msg.what == 0) {
+                    position[0]++;   //先下移一行，做后面的判断是否能下移，不能则返回
+                    for (int i = 3; i >= 0; i--) {
+                        int line = i + position[0];
+                        if (line >= 0 && B_Shape.shape[rand][i] != 0) {
+                            //判断是否超行或者下面有方块
+                            if (line >= ySize || ((allBlock[line] & (leftMath(B_Shape.shape[rand][i], position[1]))) != 0)) {
+                                canMove = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (!canMove) {
+                        position[0]--;   //上面进行了假设下移，所以此处要移回原位置
+                        for (int i = 3; i >= 0; i--) {
+                            int line = i + position[0];
+                            if (line >= 0 && B_Shape.shape[rand][i] != 0) {
+                                for (int j = 0; j < xSize; j++) {
+                                    if (((1 << j) & (leftMath(B_Shape.shape[rand][i], position[1]))) != 0) {
+                                        blockList.set(line * xSize + j, randColor);
+                                    }
+                                }
+                            }
+                        }
+                        stopDown();
+                    } else {
+                        for (int i = 3; i >= 0; i--) {
+                            int line = i + position[0];
+                            if (line >= 0 && B_Shape.shape[rand][i] != 0) {
+                                for (int j = 0; j < xSize; j++) {
+                                    if (((1 << j) & (leftMath(B_Shape.shape[rand][i], position[1]))) != 0) {
+                                        blockList.set(line * xSize + j, randColor);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    for (int i = 3; i >= 0; i--) {
+                        int line = i + position[0];
+                        if (line >= 0 && B_Shape.shape[rand][i] != 0) {
+                            for (int j = 0; j < xSize; j++) {
+                                if (((1 << j) & (leftMath(B_Shape.shape[rand][i], position[1]))) != 0) {
+                                    blockList.set(line * xSize + j, randColor);
+                                }
                             }
                         }
                     }
                 }
-            }
 
 
-
+           }
             //---------------------------------------------------------------------------------------------------------
-            if(CreateRoom.Mode!=0) {
-
+            if(!(CreateRoom.Mode==0&&SelectMode.intnetMode==1)) {
                 switch (direction) {
                     case 13:
                         snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() + 1, snakeBody.getFirst().getNodeY()));
@@ -234,12 +235,24 @@ public class MainActivity extends AppCompatActivity {
             if(SelectMode.intnetMode==1&&CreateRoom.Mode==1){
             client=new Thread(ClientListener);
             client.start();
+                for (int i = 0; i < ySize; i++) {
+                    if (allBlock[i] == 0) {
+                        for (int j = 0; j < xSize; j++) {
+                            blockList.set(i * xSize + j, 0);
+                        }
+                    } else {
+                        for (int j = 0; j < xSize; j++) {
+                            blockList.set(i * xSize + j, b_color[i][j]);
+                        }
+                    }
+                }
             }
             if(SelectMode.intnetMode==1&&CreateRoom.Mode==0&&server==null){
                 mServerSocket=CreateRoom.mServerSocket;
                 server=new Thread(ServerListener);
                 server.start();
             }
+
 
             if(refresh) {
                 for (S_node node : snakeBody)
@@ -441,9 +454,10 @@ public class MainActivity extends AppCompatActivity {
         builder.setNegativeButton("退出", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent1=new Intent(MainActivity.this,MusicService.class);
-                intent1.putExtra("floge",1);
-                startService(intent1);
+//                Intent intent1=new Intent(MainActivity.this,MusicService.class);
+//                intent1.putExtra("floge",1);
+//                startService(intent1);
+                mediaPlayer.pause();
                 finish();
             }
         }).create();
@@ -536,6 +550,9 @@ public class MainActivity extends AppCompatActivity {
             }
         },0,timeInterval);
 
+        mediaPlayer = MediaPlayer.create(this, R.raw.b_s);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
 
     }
 
@@ -796,6 +813,7 @@ public class MainActivity extends AppCompatActivity {
 
     //是否按下返回键
     public void onBackPressed() {
+        pause();
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         builder.setMessage("是否退出游戏？");
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -828,6 +846,7 @@ public class MainActivity extends AppCompatActivity {
             s_btn_right.setEnabled(false);
             s_btn_up.setEnabled(false);
             btn_pause.setBackground(pa);
+            mediaPlayer.pause();
         }
         else {
             startTimer();
@@ -840,6 +859,7 @@ public class MainActivity extends AppCompatActivity {
             s_btn_right.setEnabled(true);
             s_btn_up.setEnabled(true);
             btn_pause.setBackground(st);
+            mediaPlayer.start();
         }
         p=!p;
     }
@@ -854,22 +874,25 @@ public class MainActivity extends AppCompatActivity {
             public void onDismiss(DialogInterface dialog) {
                 if (s.music=="begin"){
                     pause();
-                    Intent intent=new Intent(MainActivity.this,MusicService.class);
-                    intent.putExtra("floge",0);
-                    startService(intent);
+//                    Intent intent=new Intent(MainActivity.this,MusicService.class);
+//                    intent.putExtra("floge",0);
+//                    startService(intent);
+                    mediaPlayer.start();
                 }
                 else if (s.music=="end"){
                     pause();
-                    Intent intent=new Intent(MainActivity.this,MusicService.class);
-                    intent.putExtra("floge",1);
-                    startService(intent);
+//                    Intent intent=new Intent(MainActivity.this,MusicService.class);
+//                    intent.putExtra("floge",1);
+//                    startService(intent);
+                    mediaPlayer.pause();
                 }
                 else{
                     Intent intent=new Intent(MainActivity.this,SelectSpeed.class);
                     startActivity(intent);
-                    Intent intent1=new Intent(MainActivity.this,MusicService.class);
-                    intent1.putExtra("floge",1);
-                    startService(intent1);
+//                    Intent intent1=new Intent(MainActivity.this,MusicService.class);
+//                    intent1.putExtra("floge",1);
+//                    startService(intent1);
+                    mediaPlayer.pause();
                 }
             }
         });
@@ -889,7 +912,12 @@ public class MainActivity extends AppCompatActivity {
             b_btn_right.setEnabled(false);
             b_btn_up.setEnabled(false);
         }
+    }
 
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        if (!p)
+            pause();
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -902,15 +930,34 @@ public class MainActivity extends AppCompatActivity {
             Inetnet();
         select(level);
         btn_Move();
-        Intent intent=new Intent(MainActivity.this,MusicService.class);
-        startService(intent);
+//        Intent intent=new Intent(MainActivity.this,MusicService.class);
+//        startService(intent);
     }
 
     public Runnable ClientListener = new Runnable() {
         @Override
         public void run() {
             try {
-                if(socket==null)
+
+                Socket socket = new Socket(CreateRoom.ServerIP,CreateRoom.ServerPort);
+                ObjectOutputStream objectOutputStream=null;
+                objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
+                S_snake s_snake=new S_snake();
+                s_snake.setLinkedList(snakeBody,"snake");
+                s_snake.setFood(food);
+                objectOutputStream.writeObject(s_snake);
+                objectOutputStream.flush();
+
+                ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+                B_info b_info=(B_info) objectInputStream.readObject();
+                allBlock=b_info.getAllblock();
+                b_color=b_info.getB_color();
+               /* blockList=b_info.getBlockList();
+                blockNextList=b_info.getBlockNextList();*/
+                socket.close();
+                socket=null;
+
+                /*if(socket==null)
                    socket = new Socket(CreateRoom.ServerIP,CreateRoom.ServerPort);
                 ObjectOutputStream objectOutputStream=null;
                 objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
@@ -919,9 +966,19 @@ public class MainActivity extends AppCompatActivity {
                 s_snake.setFood(food);
                 objectOutputStream.writeObject(s_snake);
                 objectOutputStream.flush();
+
+                ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+                B_info b_info=(B_info) objectInputStream.readObject();
+                allBlock=b_info.getAllblock();
+                blockList=b_info.getBlockList();
+                blockNextList=b_info.getBlockNextList();
+
                 socket.close();
-                socket=null;
+                socket=null;*/
             } catch (IOException e) {
+                e.printStackTrace();
+            }
+            catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
@@ -939,6 +996,13 @@ public class MainActivity extends AppCompatActivity {
                     S_snake s_snake = (S_snake) objectInputStream.readObject();
                     snakeBody=s_snake.getLinkedList();
                     food=s_snake.getFood();
+
+                    ObjectOutputStream objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
+                    B_info b_info=new B_info();
+                    b_info.setB_info(allBlock,blockList,blockNextList,b_color);
+                    objectOutputStream.writeObject(b_info);
+                    objectOutputStream.flush();
+
                     if(refresh==false){
                         mServerSocket=null;
                         break;
@@ -950,7 +1014,6 @@ public class MainActivity extends AppCompatActivity {
             catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-
         }
     };
 }
