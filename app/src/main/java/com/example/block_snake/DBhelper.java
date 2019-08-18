@@ -9,7 +9,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table UserInfo(id integer primary key,name char(20),picture char(20),easy integer,ordinary integer,hard integer,other integer,more integer)");
+        db.execSQL("create table UserInfo(id integer primary key,name char(20),floge integer,easy integer,ordinary integer,hard integer,other integer,more integer)");
     }
 
     @Override

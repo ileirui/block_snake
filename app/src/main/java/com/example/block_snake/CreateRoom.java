@@ -65,6 +65,12 @@ public class CreateRoom extends AppCompatActivity {
         waitclient=null;
         change=null;
         nsRegListener=null;
+        Mode = 1;
+        ServerIP=null;
+        ServerPort=0;
+        c=0;
+        destory=0;
+        canrun=true;
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,7 +124,8 @@ public class CreateRoom extends AppCompatActivity {
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                unregisterService();
+                if(nsRegListener!=null)
+                    unregisterService();
                 canrun=false;
                 Intent intent=new Intent(CreateRoom.this,SelectMode.class);
                 startActivity(intent);
@@ -294,11 +301,14 @@ public class CreateRoom extends AppCompatActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             ServerIP=null;
+            ServerPort=0;
             NsdServiceInfo info;
             info=(NsdServiceInfo) msg.obj;
             ServerPort=info.getPort();
             ServerIP=info.getHost();
             if(ServerIP!=null){
+                Thread thread=new Thread(ClientListener);
+                thread.start();
                 Intent intent=new Intent(CreateRoom.this,MainActivity.class);
                 intent.putExtra("level",1);
                 startActivity(intent);
@@ -322,7 +332,25 @@ public class CreateRoom extends AppCompatActivity {
         };
         nsdManager.resolveService(nsdServiceInfo,nsResolveListener);
     }
+    public Runnable ClientListener = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Socket socket = new Socket(ServerIP,ServerPort);
+                ObjectOutputStream objectOutputStream=null;
+                objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
+                S_snake s_snake=new S_snake();
+                s_snake.setLinkedList(null,"snake");
+                objectOutputStream.writeObject(s_snake);
+                objectOutputStream.flush();
+                socket.close();
+                socket=null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
+    };
     public void unregisterService() {
         nsdManager = (NsdManager) getApplicationContext().getSystemService(Context.NSD_SERVICE);
         //nsdManager.stopServiceDiscovery(nsDicListener); // 关闭网络发现

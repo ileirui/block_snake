@@ -15,9 +15,10 @@ public class B_info implements Serializable {
     int[] position=new int[]{-4,4};
     int rand;
     int randColor;
+    boolean Server_stop=false;
 
 
-    public void setB_info(int[] allblock,List<Integer> blockList,List<Integer> blockNextList,int[][]b_color,int[]position,int rand,int randColor){
+    public void setB_info(int[] allblock,List<Integer> blockList,List<Integer> blockNextList,int[][]b_color,int[]position,int rand,int randColor,boolean stop){
         this.allblock=allblock;
         this.blockList=blockList;
         this.blockNextList=blockNextList;
@@ -25,6 +26,7 @@ public class B_info implements Serializable {
         this.position=position;
         this.rand=rand;
         this.randColor=randColor;
+        this.Server_stop=stop;
     }
 
     public int[] getAllblock(){
@@ -46,4 +48,5 @@ public class B_info implements Serializable {
     public int[] getPosition(){ return position; }
     public int getRand(){ return rand; }
     public int getRandColor(){ return randColor;}
+    public boolean getServerstop(){return Server_stop;}
 }

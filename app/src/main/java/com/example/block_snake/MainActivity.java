@@ -66,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
     public Thread server=null;
     public Thread client=null;
     boolean sendAllblock=false;
+    boolean Serverstop=false;
+    boolean Clientstop=false;
 
     //-----------------------------------------------------
 
@@ -275,6 +277,9 @@ public class MainActivity extends AppCompatActivity {
             }
             blockList.set(food.getNodeY()*xSize+food.getNodeX(),7);
             //---------------------------------------------------------------------------------------------------------------
+            if(Clientstop){
+                pause();
+            }
 
             block.setmDatas(blockList);
             block.notifyDataSetChanged();
@@ -715,6 +720,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pause();
+                Serverstop=true;
             }
         });
         //设置按钮
@@ -844,7 +850,7 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
-    //暂停游戏
+    //暂停游戏+开始游戏
     public void pause(){
         Drawable pa= ResourcesCompat.getDrawable(getResources(),R.drawable.pause,null);
         Drawable st= ResourcesCompat.getDrawable(getResources(),R.drawable.start,null);
@@ -962,6 +968,7 @@ public class MainActivity extends AppCompatActivity {
                 rand=b_info.getRand();
                 position=b_info.getPosition();
                 randColor=b_info.getRandColor();
+                Clientstop=b_info.getServerstop();
                 socket.close();
                 socket=null;
             } catch (IOException e) {
@@ -995,7 +1002,8 @@ public class MainActivity extends AppCompatActivity {
 
                     ObjectOutputStream objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
                     B_info b_info=new B_info();
-                    b_info.setB_info(allBlock,blockList,blockNextList,b_color,position,rand,randColor);
+                    b_info.setB_info(allBlock,blockList,blockNextList,b_color,position,rand,randColor,Serverstop);
+                    Serverstop=false;
                     objectOutputStream.writeObject(b_info);
                     objectOutputStream.flush();
 
