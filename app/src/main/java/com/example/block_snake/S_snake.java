@@ -8,6 +8,8 @@ public class S_snake implements Serializable {
     private String name="default";
     public S_node food;
     public LinkedList<S_node>list;
+    int [] allBlock  = new int[15];
+    int[][] b_color=new int[15][10];
     public void setLinkedList(LinkedList<S_node> x,String y){
         name=y;
         list=x;
@@ -20,6 +22,7 @@ public class S_snake implements Serializable {
     public void setFood(S_node  z){
         food=z;
     }
+
     public S_node getFood(){
         return food;
     }
@@ -32,4 +35,17 @@ public class S_snake implements Serializable {
         this.name=name;
     }
 
+    public void setAllBlock(int [] allBlock){
+        this.allBlock=allBlock;
+    }
+
+    public int[] getAllBlock(){
+        return allBlock;
+    }
+    public void setB_color(int [][]color){
+        b_color=color;
+    }
+    public int[][]getB_color(){
+        return b_color;
+    }
 }

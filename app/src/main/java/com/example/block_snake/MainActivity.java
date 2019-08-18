@@ -6,10 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
-import android.net.nsd.NsdManager;
-import android.net.nsd.NsdServiceInfo;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.res.ResourcesCompat;
@@ -58,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 //---------------------------------------------------
     LinkedList<S_node> snakeBody;
     LinkedList<S_node> snakeBodyC ;
-    int direction=12;   //0为上，1为下，2为左，3为右
+    int direction=12;
     int S_up=10,S_down=11,S_left=12,S_right=13;
     S_node food;
     int status=0;
@@ -69,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     ServerSocket mServerSocket;
     public Thread server=null;
     public Thread client=null;
+    boolean sendAllblock=false;
 
     //-----------------------------------------------------
 
@@ -171,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
                             allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
                             // blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
                             b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
+                            sendAllblock=true;
                         }
                         S_eat();
                         break;
@@ -189,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
                             allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
                             //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
                             b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
+                            sendAllblock=true;
                         }
                         S_eat();
                         break;
@@ -207,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
                                 allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
                                 //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
                                 b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
+                                sendAllblock=true;
                             }
                         }
                         S_eat();
@@ -226,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
                                 allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
                                 //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
                                 b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
+                                sendAllblock=true;
                             }
                         }
                         S_eat();
@@ -246,6 +247,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
+                nextBlock.setmDatas(blockNextList);
+                nextBlock.notifyDataSetChanged();
             }
             if(SelectMode.intnetMode==1&&CreateRoom.Mode==0&&server==null){
                 mServerSocket=CreateRoom.mServerSocket;
@@ -454,11 +457,10 @@ public class MainActivity extends AppCompatActivity {
         builder.setNegativeButton("退出", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-//                Intent intent1=new Intent(MainActivity.this,MusicService.class);
-//                intent1.putExtra("floge",1);
-//                startService(intent1);
                 mediaPlayer.pause();
                 finish();
+                Intent intent=new Intent(MainActivity.this,SelectMode.class);
+                startActivity(intent);
             }
         }).create();
 
@@ -497,6 +499,7 @@ public class MainActivity extends AppCompatActivity {
         s_btn_up=findViewById(R.id.s_btn_up);
         server=null;
         client=null;
+        sendAllblock=false;
 //------------------------------------------------------
 
         for (int i=0;i<10;i++){
@@ -874,24 +877,15 @@ public class MainActivity extends AppCompatActivity {
             public void onDismiss(DialogInterface dialog) {
                 if (s.music=="begin"){
                     pause();
-//                    Intent intent=new Intent(MainActivity.this,MusicService.class);
-//                    intent.putExtra("floge",0);
-//                    startService(intent);
                     mediaPlayer.start();
                 }
                 else if (s.music=="end"){
                     pause();
-//                    Intent intent=new Intent(MainActivity.this,MusicService.class);
-//                    intent.putExtra("floge",1);
-//                    startService(intent);
                     mediaPlayer.pause();
                 }
                 else{
-                    Intent intent=new Intent(MainActivity.this,SelectSpeed.class);
+                    Intent intent=new Intent(MainActivity.this,SelectMode.class);
                     startActivity(intent);
-//                    Intent intent1=new Intent(MainActivity.this,MusicService.class);
-//                    intent1.putExtra("floge",1);
-//                    startService(intent1);
                     mediaPlayer.pause();
                 }
             }
@@ -930,21 +924,22 @@ public class MainActivity extends AppCompatActivity {
             Inetnet();
         select(level);
         btn_Move();
-//        Intent intent=new Intent(MainActivity.this,MusicService.class);
-//        startService(intent);
     }
 
     public Runnable ClientListener = new Runnable() {
         @Override
         public void run() {
             try {
-
                 Socket socket = new Socket(CreateRoom.ServerIP,CreateRoom.ServerPort);
                 ObjectOutputStream objectOutputStream=null;
                 objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
                 S_snake s_snake=new S_snake();
                 s_snake.setLinkedList(snakeBody,"snake");
                 s_snake.setFood(food);
+                if(sendAllblock){
+                    sendAllblock=false;
+                    s_snake.setB_color(b_color);
+                     s_snake.setAllBlock(allBlock); }
                 objectOutputStream.writeObject(s_snake);
                 objectOutputStream.flush();
 
@@ -952,29 +947,10 @@ public class MainActivity extends AppCompatActivity {
                 B_info b_info=(B_info) objectInputStream.readObject();
                 allBlock=b_info.getAllblock();
                 b_color=b_info.getB_color();
-               /* blockList=b_info.getBlockList();
-                blockNextList=b_info.getBlockNextList();*/
-                socket.close();
-                socket=null;
-
-                /*if(socket==null)
-                   socket = new Socket(CreateRoom.ServerIP,CreateRoom.ServerPort);
-                ObjectOutputStream objectOutputStream=null;
-                objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
-                S_snake s_snake=new S_snake();
-                s_snake.setLinkedList(snakeBody,"snake");
-                s_snake.setFood(food);
-                objectOutputStream.writeObject(s_snake);
-                objectOutputStream.flush();
-
-                ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-                B_info b_info=(B_info) objectInputStream.readObject();
-                allBlock=b_info.getAllblock();
                 blockList=b_info.getBlockList();
                 blockNextList=b_info.getBlockNextList();
-
                 socket.close();
-                socket=null;*/
+                socket=null;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -996,6 +972,13 @@ public class MainActivity extends AppCompatActivity {
                     S_snake s_snake = (S_snake) objectInputStream.readObject();
                     snakeBody=s_snake.getLinkedList();
                     food=s_snake.getFood();
+                    int [] b=s_snake.getAllBlock();
+                    for(int a:b){
+                        if(a!=0){
+                            b_color=s_snake.getB_color();
+                            allBlock=s_snake.getAllBlock();
+                        }
+                    }
 
                     ObjectOutputStream objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
                     B_info b_info=new B_info();
