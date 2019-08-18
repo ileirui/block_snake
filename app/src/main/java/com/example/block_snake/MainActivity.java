@@ -247,6 +247,16 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
+                for (int i = 3; i >= 0; i--) {
+                    int line = i + position[0];
+                    if (line >= 0 && B_Shape.shape[rand][i] != 0) {
+                        for (int j = 0; j < xSize; j++) {
+                            if (((1 << j) & (leftMath(B_Shape.shape[rand][i], position[1]))) != 0) {
+                                blockList.set(line * xSize + j, randColor);
+                            }
+                        }
+                    }
+                }
                 nextBlock.setmDatas(blockNextList);
                 nextBlock.notifyDataSetChanged();
             }
@@ -949,6 +959,9 @@ public class MainActivity extends AppCompatActivity {
                 b_color=b_info.getB_color();
                 blockList=b_info.getBlockList();
                 blockNextList=b_info.getBlockNextList();
+                rand=b_info.getRand();
+                position=b_info.getPosition();
+                randColor=b_info.getRandColor();
                 socket.close();
                 socket=null;
             } catch (IOException e) {
@@ -982,7 +995,7 @@ public class MainActivity extends AppCompatActivity {
 
                     ObjectOutputStream objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
                     B_info b_info=new B_info();
-                    b_info.setB_info(allBlock,blockList,blockNextList,b_color);
+                    b_info.setB_info(allBlock,blockList,blockNextList,b_color,position,rand,randColor);
                     objectOutputStream.writeObject(b_info);
                     objectOutputStream.flush();
 

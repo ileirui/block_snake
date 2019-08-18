@@ -12,13 +12,19 @@ public class B_info implements Serializable {
     List<Integer> blockList;
     List<Integer> blockNextList;
     public String name;
+    int[] position=new int[]{-4,4};
+    int rand;
+    int randColor;
 
 
-    public void setB_info(int[] allblock,List<Integer> blockList,List<Integer> blockNextList,int[][]b_color){
+    public void setB_info(int[] allblock,List<Integer> blockList,List<Integer> blockNextList,int[][]b_color,int[]position,int rand,int randColor){
         this.allblock=allblock;
         this.blockList=blockList;
         this.blockNextList=blockNextList;
         this.b_color=b_color;
+        this.position=position;
+        this.rand=rand;
+        this.randColor=randColor;
     }
 
     public int[] getAllblock(){
@@ -27,7 +33,7 @@ public class B_info implements Serializable {
     public List<Integer> getBlockList(){
         return blockList;
     }
-   public List<Integer> getBlockNextList(){
+    public List<Integer> getBlockNextList(){
         return blockNextList;
    }
     public void setName(String string) {
@@ -36,8 +42,8 @@ public class B_info implements Serializable {
     public String getName(){
         return name;
     }
-    public int[][] getB_color(){
-        return b_color;
-    }
-
+    public int[][] getB_color(){ return b_color; }
+    public int[] getPosition(){ return position; }
+    public int getRand(){ return rand; }
+    public int getRandColor(){ return randColor;}
 }
