@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     List<Integer> blockList=new ArrayList<>();   //方块列表
     List<Integer> blockNextList=new ArrayList<>();  //方块下一跳列表
     MediaPlayer mediaPlayer;           //背景音乐
+    public static int music;
 
 //---------------------------------------------------
     LinkedList<S_node> snakeBody;
@@ -568,9 +569,7 @@ public class MainActivity extends AppCompatActivity {
             }
         },0,timeInterval);
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.b_s);
-        mediaPlayer.setLooping(true);
-        mediaPlayer.start();
+        startMusic();
 
     }
 
@@ -727,6 +726,7 @@ public class MainActivity extends AppCompatActivity {
         btn_setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                music=getMusic();
                 if (!p)
                     pause();
                 setting();
@@ -830,6 +830,27 @@ public class MainActivity extends AppCompatActivity {
         return highestScore;
     }
 
+    //获取音乐变量
+    public int getMusic(){
+        db=dBhelper.getReadableDatabase();
+        int id=1;
+        Cursor cursor=db.rawQuery("select * from UserInfo where id=?",new String[]{String.valueOf(id)});
+        if (cursor.getCount()!=0){
+            cursor.moveToFirst();
+            music=Integer.parseInt(cursor.getString(cursor.getColumnIndex("music")));
+        }
+        db.close();
+        return music;
+    }
+
+    //保存音乐变量
+    public void setMusic(int music){
+        db=dBhelper.getWritableDatabase();
+        int id=1;
+        db.execSQL("update UserInfo set music=? where id=?",new Object[]{music,id});
+        db.close();
+    }
+
     //是否按下返回键
     public void onBackPressed() {
         pause();
@@ -883,6 +904,16 @@ public class MainActivity extends AppCompatActivity {
         p=!p;
     }
 
+    //背景音乐
+    public void startMusic(){
+        if (getMusic()==1)
+            mediaPlayer = MediaPlayer.create(this, R.raw.music2);
+        else
+            mediaPlayer = MediaPlayer.create(this, R.raw.music1);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
+    }
+
     //设置
     public void setting(){
         final setting s=new setting(MainActivity.this);
@@ -891,13 +922,17 @@ public class MainActivity extends AppCompatActivity {
         s.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                if (s.music=="begin"){
+                if (s.music1=="begin"){
                     pause();
-                    mediaPlayer.start();
+//                    mediaPlayer.start();
+                    mediaPlayer.pause();
+                    setMusic(s.m);
+                    startMusic();
                 }
-                else if (s.music=="end"){
+                else if (s.music1=="end"){
                     pause();
                     mediaPlayer.pause();
+                    setMusic(s.m);
                 }
                 else{
                     Intent intent=new Intent(MainActivity.this,SelectMode.class);

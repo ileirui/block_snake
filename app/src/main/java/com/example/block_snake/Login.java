@@ -18,7 +18,7 @@ public class Login extends AppCompatActivity {
     SQLiteDatabase db;
     DBhelper dBhelper;
     Button btn_login;
-    int id =1,score=0,f;
+    int id =1,score=0,f=0;
     String name="游客";
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {"android.permission.READ_EXTERNAL_STORAGE",
@@ -49,7 +49,7 @@ public class Login extends AppCompatActivity {
             db.close();
         } else {
             db=dBhelper.getWritableDatabase();
-            db.execSQL("insert into UserInfo(id,name,floge,easy,ordinary,hard,other,more)values(?,?,?,?,?,?,?,?)",new Object[]{id,name,score,score,score,score,score,score});
+            db.execSQL("insert into UserInfo(id,name,floge,easy,ordinary,hard,other,more,music)values(?,?,?,?,?,?,?,?,?)",new Object[]{id,name,score,score,score,score,score,score,score});
             db.close();
         }
     }
@@ -113,8 +113,8 @@ public class Login extends AppCompatActivity {
         Cursor cursor=db.rawQuery("select * from UserInfo where id=?",new String[]{String.valueOf(id)});
         if (cursor.getCount()!=0) {
             cursor.moveToFirst();
-            f = Integer.parseInt(cursor.getString(cursor.getColumnIndex("floge")));
+//            fl = Integer.parseInt(cursor.getString(cursor.getColumnIndex("floge")));
         }
-        return f;
+        return Integer.parseInt(cursor.getString(cursor.getColumnIndex("floge")));
     }
 }

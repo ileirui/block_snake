@@ -13,15 +13,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/e_name"
-        android:text="确定"
+        android:text="取消"
         android:textSize="20dp"
-        android:id="@+id/ok"/>
+        android:id="@+id/cancle"
+        android:background="@drawable/btn_cancle"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/e_name"
-        android:layout_toRightOf="@id/ok"
-        android:text="取消"
+        android:text="确定"
         android:textSize="20dp"
-        android:id="@+id/cancle"/>
+        android:layout_toRightOf="@id/cancle"
+        android:id="@+id/ok"
+        android:background="@drawable/btn_ok" />
+
 </RelativeLayout>
