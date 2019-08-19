@@ -6,30 +6,46 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="背景音乐"
+        android:text="背景音乐1"
         android:textSize="30sp"
-        android:id="@+id/music"/>
+        android:id="@+id/music1"/>
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/music"
-        android:layout_alignBottom="@id/music"
+        android:layout_toRightOf="@id/music1"
+        android:layout_alignBottom="@id/music1"
         android:layout_marginLeft="10dp"
-        android:id="@+id/check_music"
+        android:id="@+id/check_music1"
         android:checked="true"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="背景音乐2"
+        android:textSize="30sp"
+        android:id="@+id/music2"
+        android:layout_below="@id/music1"/>
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/music2"
+        android:layout_alignBottom="@id/music2"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/check_music2"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/music"
+        android:layout_below="@id/music2"
         android:text="确定"
-        android:textSize="20dp"
-        android:id="@+id/ok"/>
+        android:textSize="20sp"
+        android:id="@+id/ok"
+        android:background="@drawable/btn_ok"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/music"
+        android:layout_below="@id/music2"
         android:layout_toRightOf="@id/ok"
         android:text="退出"
-        android:textSize="20dp"
-        android:id="@+id/cancle"/>
+        android:textSize="20sp"
+        android:id="@+id/cancle"
+        android:background="@drawable/btn_cancle"/>
 </RelativeLayout>

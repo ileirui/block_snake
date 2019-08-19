@@ -19,6 +19,7 @@ public class B_info implements Serializable {
     boolean Gameover=false;
 
 
+
     public void setB_info(int[] allblock,List<Integer> blockList,List<Integer> blockNextList,int[][]b_color,int[]position,int rand,int randColor,boolean stop,boolean GameOver){
         this.allblock=allblock;
         this.blockList=blockList;
