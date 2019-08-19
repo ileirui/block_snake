@@ -10,11 +10,15 @@ public class S_snake implements Serializable {
     public LinkedList<S_node>list;
     int [] allBlock  = new int[15];
     int[][] b_color=new int[15][10];
-    public void setLinkedList(LinkedList<S_node> x,String y){
+    boolean refresh;
+    boolean GameOver;
+    public void setLinkedList(LinkedList<S_node> x,String y,boolean refresh){
         name=y;
         list=x;
+        this.refresh=refresh;
     }
-
+    public boolean getGameOver(){return GameOver;}
+    public boolean getrefresh(){return refresh;}
     public LinkedList<S_node> getLinkedList(){
         return list;
     }

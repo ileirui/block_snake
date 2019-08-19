@@ -66,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
     public Thread server=null;
     public Thread client=null;
     boolean sendAllblock=false;
+    boolean Serverstop=false;
+    boolean Clientstop=false;
+    boolean GameOver=false;
 
     //-----------------------------------------------------
 
@@ -152,86 +155,7 @@ public class MainActivity extends AppCompatActivity {
            }
             //---------------------------------------------------------------------------------------------------------
             if(!(CreateRoom.Mode==0&&SelectMode.intnetMode==1)) {
-                switch (direction) {
-                    case 13:
-                        snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() + 1, snakeBody.getFirst().getNodeY()));
-                        if (snakeBody.getFirst().getNodeX() > 9) {
-                            if (score > getHighestScore(level)) {
-                                highestScore = score;
-                                t_highestScore.setText("最高分: " + highestScore);
-                                t_score.setText("分数: " + score);
-                            }
-                            gameOver();
-                        }
-                        if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
-                            snakeBody.removeLast();
-                            allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
-                            // blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
-                            b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
-                            sendAllblock=true;
-                        }
-                        S_eat();
-                        break;
-                    case 12:
-                        snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() - 1, snakeBody.getFirst().getNodeY()));
-                        if (snakeBody.getFirst().getNodeX() < 0) {
-                            if (score > getHighestScore(level)) {
-                                highestScore = score;
-                                t_highestScore.setText("最高分: " + highestScore);
-                                t_score.setText("分数: " + score);
-                            }
-                            gameOver();
-                        }
-                        if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
-                            snakeBody.removeLast();
-                            allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
-                            //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
-                            b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
-                            sendAllblock=true;
-                        }
-                        S_eat();
-                        break;
-                    case 10:
-                        snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() - 1));
-                        if (snakeBody.getFirst().getNodeY() < 0) {
-                            if (score > getHighestScore(level)) {
-                                highestScore = score;
-                                t_highestScore.setText("最高分: " + highestScore);
-                                t_score.setText("分数: " + score);
-                            }
-                            gameOver();
-                        } else {
-                            if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
-                                snakeBody.removeLast();
-                                allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
-                                //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
-                                b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
-                                sendAllblock=true;
-                            }
-                        }
-                        S_eat();
-                        break;
-                    case 11:
-                        snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() + 1));
-                        if (snakeBody.getFirst().getNodeY() > 14) {
-                            if (score > getHighestScore(level)) {
-                                highestScore = score;
-                                t_highestScore.setText("最高分: " + highestScore);
-                                t_score.setText("分数: " + score);
-                            }
-                            gameOver();
-                        } else {
-                            if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
-                                snakeBody.removeLast();
-                                allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
-                                //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
-                                b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
-                                sendAllblock=true;
-                            }
-                        }
-                        S_eat();
-                        break;
-                }
+                S_easy();
             }
             if(SelectMode.intnetMode==1&&CreateRoom.Mode==1){
             client=new Thread(ClientListener);
@@ -259,11 +183,17 @@ public class MainActivity extends AppCompatActivity {
                 }
                 nextBlock.setmDatas(blockNextList);
                 nextBlock.notifyDataSetChanged();
+                if(GameOver==true){
+                    gameOver();
+                }
             }
             if(SelectMode.intnetMode==1&&CreateRoom.Mode==0&&server==null){
                 mServerSocket=CreateRoom.mServerSocket;
                 server=new Thread(ServerListener);
                 server.start();
+                if(refresh==false){
+                    gameOver();
+                }
             }
 
 
@@ -275,12 +205,168 @@ public class MainActivity extends AppCompatActivity {
             }
             blockList.set(food.getNodeY()*xSize+food.getNodeX(),7);
             //---------------------------------------------------------------------------------------------------------------
+            if(Clientstop){
+                pause();
+            }
 
             block.setmDatas(blockList);
             block.notifyDataSetChanged();
         }
     };
     //---------------------------------------------
+
+    void S_easy(){
+        switch (direction) {
+            case 13:
+                snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() + 1, snakeBody.getFirst().getNodeY()));
+                if (snakeBody.getFirst().getNodeX() > 9) {
+                    if (score > getHighestScore(level)) {
+                        highestScore = score;
+                        t_highestScore.setText("最高分: " + highestScore);
+                        t_score.setText("分数: " + score);
+                    }
+                    gameOver();
+                }
+                if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
+                    snakeBody.removeLast();
+                    allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
+                    // blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
+                    b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
+                    sendAllblock=true;
+                }
+                S_eat();
+                break;
+            case 12:
+                snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() - 1, snakeBody.getFirst().getNodeY()));
+                if (snakeBody.getFirst().getNodeX() < 0) {
+                    if (score > getHighestScore(level)) {
+                        highestScore = score;
+                        t_highestScore.setText("最高分: " + highestScore);
+                        t_score.setText("分数: " + score);
+                    }
+                    gameOver();
+                }
+                if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
+                    snakeBody.removeLast();
+                    allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
+                    //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
+                    b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
+                    sendAllblock=true;
+                }
+                S_eat();
+                break;
+            case 10:
+                snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() - 1));
+                if (snakeBody.getFirst().getNodeY() < 0) {
+                    if (score > getHighestScore(level)) {
+                        highestScore = score;
+                        t_highestScore.setText("最高分: " + highestScore);
+                        t_score.setText("分数: " + score);
+                    }
+                    gameOver();
+                } else {
+                    if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
+                        snakeBody.removeLast();
+                        allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
+                        //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
+                        b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
+                        sendAllblock=true;
+                    }
+                }
+                S_eat();
+                break;
+            case 11:
+                snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() + 1));
+                if (snakeBody.getFirst().getNodeY() > 14) {
+                    if (score > getHighestScore(level)) {
+                        highestScore = score;
+                        t_highestScore.setText("最高分: " + highestScore);
+                        t_score.setText("分数: " + score);
+                    }
+                    gameOver();
+                } else {
+                    if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
+                        snakeBody.removeLast();
+                        allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
+                        //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
+                        b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
+                        sendAllblock=true;
+                    }
+                }
+                S_eat();
+                break;
+        }
+    }
+    void S_other(){
+        switch (direction) {
+            case 13:
+                snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() + 1, snakeBody.getFirst().getNodeY()));
+                if (snakeBody.getFirst().getNodeX() > 9) {
+                    if (score > getHighestScore(level)) {
+                        highestScore = score;
+                        t_highestScore.setText("最高分: " + highestScore);
+                        t_score.setText("分数: " + score);
+                    }
+                    gameOver();
+                }
+                if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
+                    gameOver();
+                    sendAllblock=true;
+                }
+                S_eat();
+                break;
+            case 12:
+                snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() - 1, snakeBody.getFirst().getNodeY()));
+                if (snakeBody.getFirst().getNodeX() < 0) {
+                    if (score > getHighestScore(level)) {
+                        highestScore = score;
+                        t_highestScore.setText("最高分: " + highestScore);
+                        t_score.setText("分数: " + score);
+                    }
+                    gameOver();
+                }
+                if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
+                    gameOver();
+                    sendAllblock=true;
+                }
+                S_eat();
+                break;
+            case 10:
+                snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() - 1));
+                if (snakeBody.getFirst().getNodeY() < 0) {
+                    if (score > getHighestScore(level)) {
+                        highestScore = score;
+                        t_highestScore.setText("最高分: " + highestScore);
+                        t_score.setText("分数: " + score);
+                    }
+                    gameOver();
+                } else {
+                    if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
+                        gameOver();
+                        sendAllblock=true;
+                    }
+                }
+                S_eat();
+                break;
+            case 11:
+                snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() + 1));
+                if (snakeBody.getFirst().getNodeY() > 14) {
+                    if (score > getHighestScore(level)) {
+                        highestScore = score;
+                        t_highestScore.setText("最高分: " + highestScore);
+                        t_score.setText("分数: " + score);
+                    }
+                    gameOver();
+                } else {
+                    if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
+                        gameOver();
+                        sendAllblock=true;
+                    }
+                }
+                S_eat();
+                break;
+        }
+    }
     //蛇判定食物及自身函数
     void S_eat(){
         snakeBodyC = (LinkedList<S_node>) snakeBody.clone();
@@ -424,44 +510,47 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle("游戏结束");
         builder.setMessage("本局得分: "+score);
         refresh=false;
-        //在弹窗中设置  再来一局  按钮
-        builder.setPositiveButton("再来一局", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                score =0;
-                t_score.setText("分数: "+score);
-                position[0]=-4;  //初始化方块位置
-                position[1]=4;
-                for (int i=0;i<ySize;i++){
-                    allBlock[i]=0;
-                    for (int j=0;j<xSize;j++){
-                        b_color[i][j]=0;
+        GameOver=true;
+        if(SelectMode.intnetMode==0) {
+            //在弹窗中设置  再来一局  按钮
+            builder.setPositiveButton("再来一局", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    score = 0;
+                    t_score.setText("分数: " + score);
+                    position[0] = -4;  //初始化方块位置
+                    position[1] = 4;
+                    for (int i = 0; i < ySize; i++) {
+                        allBlock[i] = 0;
+                        for (int j = 0; j < xSize; j++) {
+                            b_color[i][j] = 0;
+                        }
                     }
-                }
-                rand=random.nextInt(20);
-                position[0]=B_Shape.initPosition[rand][1];
-                position[1]=B_Shape.initPosition[rand][0];
-                randColor=random.nextInt(5)+1;
-                nextRand=random.nextInt(20);
-                nextRandColor=random.nextInt(5)+1;
+                    rand = random.nextInt(20);
+                    position[0] = B_Shape.initPosition[rand][1];
+                    position[1] = B_Shape.initPosition[rand][0];
+                    randColor = random.nextInt(5) + 1;
+                    nextRand = random.nextInt(20);
+                    nextRandColor = random.nextInt(5) + 1;
 //---------------------------------------------------------------
-                direction=12;
-                snakeBody.clear();
-                for(int i=4;i<=6;i++)
-                    snakeBody.addLast(new S_node(i,7));
-                refresh=true;
+                    direction = 12;
+                    snakeBody.clear();
+                    for (int i = 4; i <= 6; i++)
+                        snakeBody.addLast(new S_node(i, 7));
+                    refresh = true;
 //---------------------------------------------------------------
 
-                timer=new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        status=0;
-                        handler.sendEmptyMessage(0);
-                    }
-                },0,timeInterval);
-            }
-        });
+                    timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            status = 0;
+                            handler.sendEmptyMessage(0);
+                        }
+                    }, 0, timeInterval);
+                }
+            });
+        }
 
         //退出  按钮
         builder.setNegativeButton("退出", new DialogInterface.OnClickListener() {
@@ -715,6 +804,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pause();
+                Serverstop=true;
             }
         });
         //设置按钮
@@ -844,7 +934,7 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
-    //暂停游戏
+    //暂停游戏+开始游戏
     public void pause(){
         Drawable pa= ResourcesCompat.getDrawable(getResources(),R.drawable.pause,null);
         Drawable st= ResourcesCompat.getDrawable(getResources(),R.drawable.start,null);
@@ -944,7 +1034,7 @@ public class MainActivity extends AppCompatActivity {
                 ObjectOutputStream objectOutputStream=null;
                 objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
                 S_snake s_snake=new S_snake();
-                s_snake.setLinkedList(snakeBody,"snake");
+                s_snake.setLinkedList(snakeBody,"snake",refresh);
                 s_snake.setFood(food);
                 if(sendAllblock){
                     sendAllblock=false;
@@ -962,6 +1052,8 @@ public class MainActivity extends AppCompatActivity {
                 rand=b_info.getRand();
                 position=b_info.getPosition();
                 randColor=b_info.getRandColor();
+                Clientstop=b_info.getServerstop();
+                GameOver=b_info.getGameOver();
                 socket.close();
                 socket=null;
             } catch (IOException e) {
@@ -985,6 +1077,7 @@ public class MainActivity extends AppCompatActivity {
                     S_snake s_snake = (S_snake) objectInputStream.readObject();
                     snakeBody=s_snake.getLinkedList();
                     food=s_snake.getFood();
+                    refresh=s_snake.getrefresh();
                     int [] b=s_snake.getAllBlock();
                     for(int a:b){
                         if(a!=0){
@@ -995,7 +1088,8 @@ public class MainActivity extends AppCompatActivity {
 
                     ObjectOutputStream objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
                     B_info b_info=new B_info();
-                    b_info.setB_info(allBlock,blockList,blockNextList,b_color,position,rand,randColor);
+                    b_info.setB_info(allBlock,blockList,blockNextList,b_color,position,rand,randColor,Serverstop,GameOver);
+                    Serverstop=false;
                     objectOutputStream.writeObject(b_info);
                     objectOutputStream.flush();
 

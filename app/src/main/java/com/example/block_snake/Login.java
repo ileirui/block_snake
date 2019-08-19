@@ -18,8 +18,8 @@ public class Login extends AppCompatActivity {
     SQLiteDatabase db;
     DBhelper dBhelper;
     Button btn_login;
-    int id =1,score=0;
-    String name="游客",picture="R.drawable.1";
+    int id =1,score=0,f;
+    String name="游客";
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {"android.permission.READ_EXTERNAL_STORAGE",
             "android.permission.WRITE_EXTERNAL_STORAGE" };
@@ -32,25 +32,25 @@ public class Login extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                login(id,name,picture);
+                Intent intent=new Intent(Login.this,SelectMode.class);
+                startActivity(intent);
             }
         });
         verifyStoragePermissions(this);
+        login(id,name);
+        if (getfloge()==0)
+            game_info();
     }
 
-    public void login(int id,String name,String picture){
+    public void login(int id,String name){
         db=dBhelper.getReadableDatabase();
         Cursor cursor=db.rawQuery("select * from UserInfo where id=?",new String[]{String.valueOf(id)});
         if (cursor.getCount()!=0){
             db.close();
-            Intent intent=new Intent(Login.this,SelectMode.class);
-            startActivity(intent);
         } else {
             db=dBhelper.getWritableDatabase();
-            db.execSQL("insert into UserInfo(id,name,picture,easy,ordinary,hard,other,more)values(?,?,?,?,?,?,?,?)",new Object[]{id,name,picture,score,score,score,score,score});
+            db.execSQL("insert into UserInfo(id,name,floge,easy,ordinary,hard,other,more)values(?,?,?,?,?,?,?,?)",new Object[]{id,name,score,score,score,score,score,score});
             db.close();
-            Intent intent=new Intent(Login.this,SelectMode.class);
-            startActivity(intent);
         }
     }
 
@@ -85,5 +85,36 @@ public class Login extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void game_info(){
+        final Game_Info game_info=new Game_Info(Login.this);
+        game_info.setTitle("游戏简介");
+        game_info.show();
+        game_info.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if (game_info.floge==404){
+                    setfloge(1,1);
+                }
+            }
+        });
+    }
+
+    public void setfloge(int floge,int id){
+        db=dBhelper.getWritableDatabase();
+        db.execSQL("update UserInfo set floge=? where id=?",new Object[]{floge,id});
+        db.close();
+    }
+
+    public int getfloge(){
+        db=dBhelper.getReadableDatabase();
+        int id=1;
+        Cursor cursor=db.rawQuery("select * from UserInfo where id=?",new String[]{String.valueOf(id)});
+        if (cursor.getCount()!=0) {
+            cursor.moveToFirst();
+            f = Integer.parseInt(cursor.getString(cursor.getColumnIndex("floge")));
+        }
+        return f;
     }
 }

@@ -55,16 +55,7 @@ public class CreateRoom extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_room);
-        btn_back=findViewById(R.id.btn_back);
-        btn_create=findViewById(R.id.btn_create);
-        btn_join=findViewById(R.id.btn_join);
-        user_name=findViewById(R.id.user_name);
-        btn_picture=findViewById(R.id.user_picture);
-        user_name.setText(u.getName(CreateRoom.this));
-        btn_picture.setImageBitmap(u.getBitmip());
-        waitclient=null;
-        change=null;
-        nsRegListener=null;
+        init();
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,7 +68,7 @@ public class CreateRoom extends AppCompatActivity {
                 canrun=true;
                 Mode=0;
                 nsdServiceInfo = new NsdServiceInfo();
-                nsdServiceInfo.setServiceName("NSD_Test_Program");
+                nsdServiceInfo.setServiceName("NSD_Server");
                 nsdServiceInfo.setServiceType("_http._tcp.");
                 nsdServiceInfo.setPort(mLocalPort);
                 if(nsRegListener==null)
@@ -105,11 +96,9 @@ public class CreateRoom extends AppCompatActivity {
                 Mode=1;
                 // 注册网络服务的名称、类型、端口
                 nsdServiceInfo = new NsdServiceInfo();
-                nsdServiceInfo.setServiceName("NSD_Test_Program");
                 nsdServiceInfo.setServiceType("_http._tcp.");
                 nsdServiceInfo.setPort(mLocalPort);
                 discoverService();
-                initResolveListener();
             }
         });
 
@@ -119,9 +108,9 @@ public class CreateRoom extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 unregisterService();
-                canrun=false;
                 Intent intent=new Intent(CreateRoom.this,SelectMode.class);
                 startActivity(intent);
+                finish();
             }
         });
         /*btn_picture.setOnClickListener(new View.OnClickListener() {
@@ -143,6 +132,8 @@ public class CreateRoom extends AppCompatActivity {
                     btn_create.setText(String.valueOf(c/10));
             }
             else if(msg.what==1){
+                if(nsRegListener!=null)
+                    unregisterService();
                 Intent intent=new Intent(CreateRoom.this,MainActivity.class);
                 intent.putExtra("level",1);
                 startActivity(intent);
@@ -271,8 +262,11 @@ public class CreateRoom extends AppCompatActivity {
             public void onServiceFound(NsdServiceInfo serviceInfo) {
                 // 发现网络服务时就会触发该事件
                 // 可以通过switch或if获取那些你真正关心的服务
-                Toast.makeText(getApplicationContext(), "Service Found", Toast.LENGTH_SHORT).show();
-                Toast.makeText(getApplicationContext(),serviceInfo.getServiceName(),Toast.LENGTH_SHORT).show();
+                if(serviceInfo.getServiceName().equals("NSD_Server")) {
+                    nsdServiceInfo.setServiceName("NSD_Server");
+                    initResolveListener();
+                    Toast.makeText(getApplicationContext(), serviceInfo.getServiceName(), Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -294,11 +288,15 @@ public class CreateRoom extends AppCompatActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             ServerIP=null;
+            ServerPort=0;
             NsdServiceInfo info;
             info=(NsdServiceInfo) msg.obj;
             ServerPort=info.getPort();
             ServerIP=info.getHost();
             if(ServerIP!=null){
+                Thread thread=new Thread(ClientListener);
+                thread.start();
+                unregisterService();
                 Intent intent=new Intent(CreateRoom.this,MainActivity.class);
                 intent.putExtra("level",1);
                 startActivity(intent);
@@ -322,13 +320,54 @@ public class CreateRoom extends AppCompatActivity {
         };
         nsdManager.resolveService(nsdServiceInfo,nsResolveListener);
     }
+    public Runnable ClientListener = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Socket socket = new Socket(ServerIP,ServerPort);
+                ObjectOutputStream objectOutputStream=null;
+                objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
+                S_snake s_snake=new S_snake();
+                s_snake.setLinkedList(null,"snake",true);
+                objectOutputStream.writeObject(s_snake);
+                objectOutputStream.flush();
+                socket.close();
+                socket=null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
+    };
     public void unregisterService() {
         nsdManager = (NsdManager) getApplicationContext().getSystemService(Context.NSD_SERVICE);
-        //nsdManager.stopServiceDiscovery(nsDicListener); // 关闭网络发现
-        nsdManager.unregisterService(nsRegListener);    // 注销网络服务
+        if(nsDicListener!=null){
+            nsdManager.stopServiceDiscovery(nsDicListener); } // 关闭网络发现
+        if(nsRegListener!=null){
+            nsdManager.unregisterService(nsRegListener); }    // 注销网络服务
     }
 
+    public void init(){
+        btn_back=findViewById(R.id.btn_back);
+        btn_create=findViewById(R.id.btn_create);
+        btn_join=findViewById(R.id.btn_join);
+        user_name=findViewById(R.id.user_name);
+        btn_picture=findViewById(R.id.user_picture);
+        user_name.setText(u.getName(CreateRoom.this));
+        btn_picture.setImageBitmap(u.getBitmip());
+        waitclient=null;
+        change=null;
+        Mode = 1;
+        ServerIP=null;
+        mServerSocket=null;
+        ServerPort=0;
+        c=0;
+        destory=0;
+        canrun=true;
+        nsDicListener=null;
+        nsRegListener=null;
+        nsResolveListener=null;
+    }
     public String intToip(int i){
         return (i&0xFF)+"."+((i>>8)&0xFF)+"."+((i>>16)&0xFF)+"."+((i>>24)&0xFF);
     }

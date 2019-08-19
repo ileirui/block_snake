@@ -27,7 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class UserInformation extends AppCompatActivity {
-    TextView easy_score,ordinary_score,hard_score,other_score,user_name;
+    TextView easy_score,ordinary_score,hard_score,other_score,more_score,user_name;
     Bitmap head;
     ImageView im_h;
     private static String path = "/sdcard/myHead/";
@@ -42,6 +42,7 @@ public class UserInformation extends AppCompatActivity {
         ordinary_score=findViewById(R.id.ordinary_score);
         hard_score=findViewById(R.id.hard_score);
         other_score=findViewById(R.id.other_score);
+        more_score=findViewById(R.id.more_score);
         chang_name=findViewById(R.id.change_name);
         user_name=findViewById(R.id.user_name);
         btn_back=findViewById(R.id.btn_back);
@@ -56,6 +57,7 @@ public class UserInformation extends AppCompatActivity {
             ordinary_score.setText(cursor.getString(cursor.getColumnIndex("ordinary")));
             hard_score.setText(cursor.getString(cursor.getColumnIndex("hard")));
             other_score.setText(cursor.getString(cursor.getColumnIndex("other")));
+            more_score.setText(cursor.getString(cursor.getColumnIndex("more")));
         }
         db.close();
 

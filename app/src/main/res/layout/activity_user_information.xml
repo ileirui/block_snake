@@ -116,12 +116,12 @@
             android:layout_margin="10dp"
             android:id="@+id/hard_score"/>
         <TextView
-            android:text="噩梦"
-            android:textSize="20dp"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:layout_margin="10dp"
-            android:id="@+id/other_mode"/>
+        android:text="噩梦"
+        android:textSize="20dp"
+        android:layout_columnWeight="1"
+        android:layout_rowWeight="1"
+        android:layout_margin="10dp"
+        android:id="@+id/other_mode"/>
         <TextView
             android:text="0"
             android:textSize="20dp"
@@ -129,6 +129,20 @@
             android:layout_rowWeight="1"
             android:layout_margin="10dp"
             android:id="@+id/other_score"/>
+        <TextView
+            android:text="多人"
+            android:textSize="20dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_margin="10dp"
+            android:id="@+id/more_mode"/>
+        <TextView
+            android:text="0"
+            android:textSize="20dp"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_margin="10dp"
+            android:id="@+id/more_score"/>
     </GridLayout>
 
 </RelativeLayout>
