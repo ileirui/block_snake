@@ -718,7 +718,8 @@ public class MainActivity extends AppCompatActivity {
         btn_pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pause();
+                if (SelectMode.intnetMode==0)
+                    pause();
                 Serverstop=true;
             }
         });
@@ -727,8 +728,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 music=getMusic();
-                if (!p)
-                    pause();
+                if (SelectMode.intnetMode==0)
+                    if (!p)
+                         pause();
                 setting();
             }
         });
