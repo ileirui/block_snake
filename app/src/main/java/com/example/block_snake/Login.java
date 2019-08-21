@@ -38,8 +38,8 @@ public class Login extends AppCompatActivity {
         });
         verifyStoragePermissions(this);
         login(id,name);
-        if (getfloge()==0)
-            game_info();
+//        if (getfloge()==0)
+//            game_info();
     }
 
     public void login(int id,String name){
@@ -87,34 +87,33 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    public void game_info(){
-        final Game_Info game_info=new Game_Info(Login.this);
-        game_info.setTitle("游戏简介");
-        game_info.show();
-        game_info.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                if (game_info.floge==404){
-                    setfloge(1,1);
-                }
-            }
-        });
-    }
+//    public void game_info(){
+//        final Game_Info game_info=new Game_Info(Login.this);
+//        game_info.setTitle("游戏简介");
+//        game_info.show();
+//        game_info.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//            @Override
+//            public void onDismiss(DialogInterface dialog) {
+//                if (game_info.floge==404){
+//                    setfloge(1,1);
+//                }
+//            }
+//        });
+//    }
 
-    public void setfloge(int floge,int id){
-        db=dBhelper.getWritableDatabase();
-        db.execSQL("update UserInfo set floge=? where id=?",new Object[]{floge,id});
-        db.close();
-    }
+//    public void setfloge(int floge,int id){
+//        db=dBhelper.getWritableDatabase();
+//        db.execSQL("update UserInfo set floge=? where id=?",new Object[]{floge,id});
+//        db.close();
+//    }
 
-    public int getfloge(){
-        db=dBhelper.getReadableDatabase();
-        int id=1;
-        Cursor cursor=db.rawQuery("select * from UserInfo where id=?",new String[]{String.valueOf(id)});
-        if (cursor.getCount()!=0) {
-            cursor.moveToFirst();
-//            fl = Integer.parseInt(cursor.getString(cursor.getColumnIndex("floge")));
-        }
-        return Integer.parseInt(cursor.getString(cursor.getColumnIndex("floge")));
-    }
+//    public int getfloge(){
+//        db=dBhelper.getReadableDatabase();
+//        int id=1;
+//        Cursor cursor=db.rawQuery("select * from UserInfo where id=?",new String[]{String.valueOf(id)});
+//        if (cursor.getCount()!=0) {
+//            cursor.moveToFirst();
+//        }
+//        return Integer.parseInt(cursor.getString(cursor.getColumnIndex("floge")));
+//    }
 }
