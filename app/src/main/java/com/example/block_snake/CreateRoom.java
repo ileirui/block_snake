@@ -169,7 +169,7 @@ public class CreateRoom extends AppCompatActivity {
             }
             else if(msg.what==1){
                 Intent intent=new Intent(CreateRoom.this,MainActivity.class);
-                intent.putExtra("level",1);
+                intent.putExtra("level",5);
                 startActivity(intent);
             }
         }
