@@ -4,11 +4,11 @@
     android:layout_height="wrap_content">
 
     <EditText
+        android:id="@+id/e_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/e_name"
-        android:layout_alignRight="@id/ok"
-        android:layout_alignLeft="@id/cancle"/>
+        android:layout_alignLeft="@id/cancle"
+        android:layout_alignRight="@id/ok"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

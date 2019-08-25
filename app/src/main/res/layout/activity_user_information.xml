@@ -130,7 +130,7 @@
             android:layout_margin="10dp"
             android:id="@+id/other_score"/>
         <TextView
-            android:text="多人"
+            android:text="双人"
             android:textSize="20dp"
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"

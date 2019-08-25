@@ -29,7 +29,7 @@ import java.net.Socket;
 import static java.lang.Thread.sleep;
 
 public class CreateRoom extends AppCompatActivity {
-    Button btn_create,btn_back,btn_join;
+    Button btn_create,btn_back,btn_join,btn_info_create,btn_info_join;
     TextView user_name;
     ImageView btn_picture;
     UserInformation u=new UserInformation();
@@ -113,6 +113,22 @@ public class CreateRoom extends AppCompatActivity {
                 finish();
             }
         });
+
+        btn_info_create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SelectSpeed.info_floge=5;
+                SelectSpeed.game_info(CreateRoom.this);
+            }
+        });
+
+        btn_info_join.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SelectSpeed.info_floge=6;
+                SelectSpeed.game_info(CreateRoom.this);
+            }
+        });
         /*btn_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,7 +150,7 @@ public class CreateRoom extends AppCompatActivity {
             else if(msg.what==1){
                 unregisterService();
                 Intent intent=new Intent(CreateRoom.this,MainActivity.class);
-                intent.putExtra("level",1);
+                intent.putExtra("level",5);
                 startActivity(intent);
                 finish();
             }
@@ -356,6 +372,8 @@ public class CreateRoom extends AppCompatActivity {
         btn_picture=findViewById(R.id.user_picture);
         user_name.setText(u.getName(CreateRoom.this));
         btn_picture.setImageBitmap(u.getBitmip());
+        btn_info_create=findViewById(R.id.btn_info_create);
+        btn_info_join=findViewById(R.id.btn_info_join)
         waitclient=null;
         change=null;
         Mode = 1;

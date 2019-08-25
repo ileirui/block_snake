@@ -8,59 +8,40 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class Game_Info extends Dialog {
-    String g="本游戏是将经典的俄罗斯方块和贪吃蛇结合在一起的休闲小游戏",
-            g1="本游戏有单机及局域网联机两种模式",g2="llllllll";
-    int floge=0;
+    String easy="简单模式",
+           ordinary="普通模式",
+           hard="困难模式",
+           other="噩梦模式",
+           create="创建房间来等待好友的加入。开始游戏后，您操控的角色是方块",
+           jion="点击加入游戏来搜索并加入已存在的房间或等待好友创建房间。开始游戏后，您操控的角色是小蛇";
     public Game_Info(Context context){
         super(context);
         setCancelable(false);   //禁用返回键
         setContentView(R.layout.game_info);
         final TextView textView=findViewById(R.id.game_view);
         final Button next=findViewById(R.id.btn_next);
-        final Button previous=findViewById(R.id.btn_previous);
-        previous.setEnabled(false);
+        if (SelectSpeed.info_floge==1)
+            textView.setText(easy);
+        else if (SelectSpeed.info_floge==2)
+            textView.setText(ordinary);
+        else if (SelectSpeed.info_floge==3)
+            textView.setText(hard);
+        else if (SelectSpeed.info_floge==4)
+            textView.setText(other);
+        else if (SelectSpeed.info_floge==5)
+            textView.setText(create);
+        else if (SelectSpeed.info_floge==6)
+            textView.setText(jion);
         Button.OnClickListener b=new Button.OnClickListener(){
             @Override
             public void onClick(View v) {
                 switch (v.getId()){
                     case R.id.btn_next:
-                        switch (floge){
-                            case 0:
-                                textView.setText(g1);
-                                previous.setEnabled(true);
-                                floge++;
-                                break;
-                            case 1:
-                                textView.setText(g2);
-                                floge++;
-                                next.setText("不再提示");
-                                previous.setText("关闭");
-                                break;
-                            case 2:
-                                floge=404;
-                                dismiss();   //对话框销毁
-                                break;
-                        }
-                        break;
-                    case R.id.btn_previous:
-                        switch (floge){
-                            case 0:
-                                break;
-                            case 1:
-                                floge--;
-                                previous.setEnabled(false);
-                                textView.setText(g);
-                                break;
-                            case 2:
-                                dismiss();   //对话框销毁
-                                break;
-                        }
-                        break;
+                       break;
                 }
-
+                dismiss();
             }
         };
         next.setOnClickListener(b);
-        previous.setOnClickListener(b);
     }
 }

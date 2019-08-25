@@ -83,4 +83,41 @@
         android:layout_centerHorizontal="true"
         android:background="@drawable/btn_yuanjiao"/>
 
+    <Button
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@id/btn_easy"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_toRightOf="@id/btn_easy"
+        android:background="@drawable/btn_info"
+        android:id="@+id/btn_info_easy"/>
+    <Button
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@id/btn_ordinary"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_toRightOf="@id/btn_ordinary"
+        android:background="@drawable/btn_info"
+        android:id="@+id/btn_info_ordinary"/>
+    <Button
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@id/btn_hard"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_toRightOf="@id/btn_hard"
+        android:background="@drawable/btn_info"
+        android:id="@+id/btn_info_hard"/>
+    <Button
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@id/btn_other"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_toRightOf="@id/btn_other"
+        android:background="@drawable/btn_info"
+        android:id="@+id/btn_info_other"/>
+
 </RelativeLayout>

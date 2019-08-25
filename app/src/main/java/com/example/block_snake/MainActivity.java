@@ -834,6 +834,9 @@ public class MainActivity extends AppCompatActivity {
             case 4:
                 timeInterval=400;
                 break;
+            case 5:
+                timeInterval=1000;
+                break;
         }
     }
 
@@ -853,6 +856,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 4:
                 db.execSQL("update UserInfo set other=? where id=?",new Object[]{highScore,id});
+                break;
+            case 5:
+                db.execSQL("update UserInfo set more=? where id=?",new Object[]{highScore,id});
                 break;
         }
         db.close();
@@ -882,6 +888,10 @@ public class MainActivity extends AppCompatActivity {
                     t_highestScore.setText("最高分: "+cursor.getString(cursor.getColumnIndex("other")));
                     t_level.setText("等级: 噩梦");
                     break;
+                case 5:
+                    t_highestScore.setText("最高分: "+cursor.getString(cursor.getColumnIndex("more")));
+                    t_level.setText("等级: 双人");
+                    break;
             }
         }
         db.close();
@@ -906,6 +916,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 4:
                     highestScore=Integer.parseInt(cursor.getString(cursor.getColumnIndex("other")));
+                    break;
+                case 5:
+                    highestScore=Integer.parseInt(cursor.getString(cursor.getColumnIndex("more")));
                     break;
             }
         }
