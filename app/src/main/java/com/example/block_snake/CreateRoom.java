@@ -132,11 +132,11 @@ public class CreateRoom extends AppCompatActivity {
                     btn_create.setText(String.valueOf(c/10));
             }
             else if(msg.what==1){
-                if(nsRegListener!=null)
-                    unregisterService();
+                unregisterService();
                 Intent intent=new Intent(CreateRoom.this,MainActivity.class);
                 intent.putExtra("level",1);
                 startActivity(intent);
+                finish();
             }
         }
     };
@@ -300,6 +300,7 @@ public class CreateRoom extends AppCompatActivity {
                 Intent intent=new Intent(CreateRoom.this,MainActivity.class);
                 intent.putExtra("level",1);
                 startActivity(intent);
+                finish();
            }
         }
     };

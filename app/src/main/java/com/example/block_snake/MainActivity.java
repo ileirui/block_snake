@@ -67,8 +67,6 @@ public class MainActivity extends AppCompatActivity {
     public Thread server=null;
     public Thread client=null;
     boolean sendAllblock=false;
-    boolean Serverstop=false;
-    boolean Clientstop=false;
     boolean GameOver=false;
 
     //-----------------------------------------------------
@@ -192,7 +190,9 @@ public class MainActivity extends AppCompatActivity {
                 mServerSocket=CreateRoom.mServerSocket;
                 server=new Thread(ServerListener);
                 server.start();
-                if(refresh==false){
+            }
+            if(SelectMode.intnetMode==1&&CreateRoom.Mode==0){
+                if(!refresh){
                     gameOver();
                 }
             }
@@ -206,9 +206,6 @@ public class MainActivity extends AppCompatActivity {
             }
             blockList.set(food.getNodeY()*xSize+food.getNodeX(),7);
             //---------------------------------------------------------------------------------------------------------------
-            if(Clientstop){
-                pause();
-            }
 
             block.setmDatas(blockList);
             block.notifyDataSetChanged();
@@ -802,8 +799,8 @@ public class MainActivity extends AppCompatActivity {
         btn_pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pause();
-                Serverstop=true;
+                if(SelectMode.intnetMode==0)
+                    pause();
             }
         });
         //设置按钮
@@ -811,9 +808,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 music=getMusic();
-                if (!p)
-                    pause();
-                setting();
+                if(SelectMode.intnetMode==0)
+                     if (!p)
+                          pause();
+                     setting();
+
             }
         });
     }
@@ -1007,14 +1006,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 if (s.music1=="begin"){
-                    pause();
-//                    mediaPlayer.start();
+                    if (SelectMode.intnetMode==0)
+                        pause();
                     mediaPlayer.pause();
                     setMusic(s.m);
                     startMusic();
                 }
                 else if (s.music1=="end"){
-                    pause();
+                    if (SelectMode.intnetMode==0)
+                        pause();
                     mediaPlayer.pause();
                     setMusic(s.m);
                 }
@@ -1087,7 +1087,6 @@ public class MainActivity extends AppCompatActivity {
                 rand=b_info.getRand();
                 position=b_info.getPosition();
                 randColor=b_info.getRandColor();
-                Clientstop=b_info.getServerstop();
                 GameOver=b_info.getGameOver();
                 socket.close();
                 socket=null;
@@ -1123,12 +1122,11 @@ public class MainActivity extends AppCompatActivity {
 
                     ObjectOutputStream objectOutputStream=new ObjectOutputStream(socket.getOutputStream());
                     B_info b_info=new B_info();
-                    b_info.setB_info(allBlock,blockList,blockNextList,b_color,position,rand,randColor,Serverstop,GameOver);
-                    Serverstop=false;
+                    b_info.setB_info(allBlock,blockList,blockNextList,b_color,position,rand,randColor,GameOver);
                     objectOutputStream.writeObject(b_info);
                     objectOutputStream.flush();
 
-                    if(refresh==false){
+                    if(!refresh){
                         mServerSocket=null;
                         break;
                     }

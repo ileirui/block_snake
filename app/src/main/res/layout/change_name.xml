@@ -7,8 +7,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/e_name"
-        android:layout_alignRight="@id/cancle"
-        android:layout_alignLeft="@id/ok"/>
+        android:layout_alignRight="@id/ok"
+        android:layout_alignLeft="@id/cancle"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
