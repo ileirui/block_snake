@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     Random random;           //随机变量
     int[] position=new int[]{-4,4};  //方块位置，position[0]为y轴位置
     Timer timer;             //时间变量
-    Button b_btn_up,b_btn_down,b_btn_left,b_btn_right,s_btn_up,s_btn_down,s_btn_left,s_btn_right,btn_pause,btn_setting;  //移动按钮
+    Button b_btn_up,b_btn_down,b_btn_left,b_btn_right,s_btn_up,s_btn_down,s_btn_left,s_btn_right,btn_pause,btn_setting,bs_btn_up,bs_btn_down,bs_btn_left,bs_btn_right;  //移动按钮
     //画布的格子数为10x15；
     int ySize=15;
     int xSize=10;
@@ -703,6 +703,10 @@ public class MainActivity extends AppCompatActivity {
         b_next_view=findViewById(R.id.b_next_view);
         btn_pause=findViewById(R.id.pause);
         btn_setting=findViewById(R.id.setting);
+        bs_btn_down=findViewById(R.id.bs_btn_down);
+        bs_btn_left=findViewById(R.id.bs_btn_left);
+        bs_btn_right=findViewById(R.id.bs_btn_right);
+        bs_btn_up=findViewById(R.id.bs_btn_up);
 
 // -----------------------------------------------------
         s_btn_down=findViewById(R.id.s_btn_down);
@@ -767,6 +771,26 @@ public class MainActivity extends AppCompatActivity {
 
         startMusic();
 
+    }
+
+    //选择按钮功能
+    public void select_btn(){
+        if (SelectMode.intnetMode==0){
+            bs_btn_up.setVisibility(View.GONE);
+            bs_btn_down.setVisibility(View.GONE);
+            bs_btn_right.setVisibility(View.GONE);
+            bs_btn_left.setVisibility(View.GONE);
+        }
+        else if (SelectMode.intnetMode==1){
+            b_btn_left.setVisibility(View.GONE);
+            b_btn_right.setVisibility(View.GONE);
+            b_btn_up.setVisibility(View.GONE);
+            b_btn_down.setVisibility(View.GONE);
+            s_btn_left.setVisibility(View.GONE);
+            s_btn_right.setVisibility(View.GONE);
+            s_btn_up.setVisibility(View.GONE);
+            s_btn_down.setVisibility(View.GONE);
+        }
     }
 
     //移动按钮监听事件
@@ -928,6 +952,131 @@ public class MainActivity extends AppCompatActivity {
                           pause();
                      setting();
 
+            }
+        });
+//------------------------------------------------------------------------------------
+        bs_btn_left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (CreateRoom.Mode==0){
+                    for (int i=3;i>=0;i--){
+                        //如果右移之后再左移不等于原来的数，则不可移动
+                        if ((((leftMath(B_Shape.shape[rand][i],position[1]))>>1)<<1)!=(leftMath(B_Shape.shape[rand][i],position[1]))){
+                            return;
+                        }
+                    }
+
+                    for (int i=3;i>=0;i--){
+                        int line=i+position[0];
+                        if (line>=0&&B_Shape.shape[rand][i]!=0){
+                            if ((allBlock[line]&(leftMath(B_Shape.shape[rand][i],position[1])>>1))!=0){
+                                return;
+                            }
+                        }
+                    }
+                    position[1]--;
+                    status=1;
+                }
+                else if (CreateRoom.Mode==1){
+                    if(direction!=13&&direction!=12) {
+                        direction = 12;
+                        handler.sendEmptyMessage(12);
+                    }
+                }
+            }
+        });
+        bs_btn_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (CreateRoom.Mode==0){
+                    for (int i=3;i>=0;i--){
+                        if (((leftMath(B_Shape.shape[rand][i],position[1]))<<1)>0x3ff){
+                            return;  //右移越界，退出
+                        }
+                    }
+                    for (int i=3;i>=0;i--){
+                        int line=i+position[0];
+                        if (line>=0&&B_Shape.shape[rand][i]!=0){
+                            if ((allBlock[line]&(leftMath(B_Shape.shape[rand][i],position[1])<<1))!=0){
+                                return;
+                            }
+                        }
+                    }
+                    position[1]++;
+                    status=1;
+                }
+                else if (CreateRoom.Mode==1){
+                    if(direction!=12&&direction!=13) {
+                        direction = 13;
+                        handler.sendEmptyMessage(13);
+                    }
+                }
+            }
+        });
+        bs_btn_down.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (CreateRoom.Mode==0){
+                    int down =1<<10;
+                    for (int i=3;i>=0;i--){
+                        int line=i+position[0];
+                        if (line>=0&&B_Shape.shape[rand][i]!=0){
+                            down=Math.min(down,ySize-line-1);
+                            for (int j=0;j<xSize;j++){
+                                if (((1<<j)&(leftMath(B_Shape.shape[rand][i],position[1])))!=0){
+                                    for (int k=0;k+line<ySize;k++){
+                                        if (b_color[k+line][j]>0){
+                                            down=Math.min(down,k-1);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (down<=0||down==(1<<10)){
+                        return;
+                    }else{
+                        position[0]+=down;
+                        status=0;
+                        // handler.sendEmptyMessage(0);
+                    }
+                }
+                else if (CreateRoom.Mode==1){
+                    if(direction!=10&&direction!=11) {
+                        direction = 11;
+                        handler.sendEmptyMessage(11);
+                    }
+                }
+            }
+        });
+        bs_btn_up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (CreateRoom.Mode==0){
+                    int nextB=B_Shape.nextshape[rand];
+                    for (int i=3;i>=0;i--){
+                        int line =i+position[0];
+                        //检查是否越界
+                        if (leftMath(B_Shape.shape[nextB][i],position[1])>0x3ff){
+                            return;  //右边界
+                        }else if (B_Shape.shape[nextB][i]>0&&line>=ySize){
+                            return;   //下边界
+                        }else if (leftMath(leftMath(B_Shape.shape[nextB][i],position[1]),-position[1])!=B_Shape.shape[nextB][i]){
+                            return;   //左边界
+                        }else if (line>0&&line<ySize&&(leftMath(B_Shape.shape[nextB][i],position[1])&allBlock[line])!=0){
+                            return;   //检查是否与其他方块重合
+                        }
+                    }
+                    rand=nextB;
+                    status=1;
+                }
+                else if (CreateRoom.Mode==1){
+                    if(direction!=11&&direction!=10) {
+                        direction = 10;
+                        handler.sendEmptyMessage(10);
+                    }
+                }
             }
         });
     }
@@ -1186,6 +1335,7 @@ public class MainActivity extends AppCompatActivity {
         if(SelectMode.intnetMode==1)
             Inetnet();
         select(level);
+        select_btn();
         btn_Move();
     }
 

@@ -142,10 +142,48 @@
     </LinearLayout>
 
     <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="︿"
+        android:textSize="30sp"
+        android:id="@+id/bs_btn_up"
+        android:layout_below="@id/b_s_view"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/bs_btn_up"
+        android:id="@+id/btn_bs">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="&lt;"
+            android:textSize="30sp"
+            android:id="@+id/bs_btn_left"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:text=">"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/bs_btn_right"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="﹀"
+        android:textSize="30sp"
+        android:id="@+id/bs_btn_down"
+        android:layout_below="@id/btn_bs"/>
+
+
+    <Button
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/setting"
-        android:layout_toRightOf="@id/pause"
+        android:layout_alignRight="@id/b_next_view"
         android:background="@drawable/setting"/>
     <Button
         android:layout_width="30dp"
