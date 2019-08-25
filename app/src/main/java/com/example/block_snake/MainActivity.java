@@ -155,15 +155,21 @@ public class MainActivity extends AppCompatActivity {
             //---------------------------------------------------------------------------------------------------------
             if(!(CreateRoom.Mode==0&&SelectMode.intnetMode==1)) {
                 switch (level){
-                    case 1:S_veryeasy();
-                            break;
-                    case 2:S_easy();
-                            break;
-                    case 4:S_other();
-                            break;
+                    case 1:
+                        S_veryeasy();
+                        break;
+                    case 2:
+                        S_easy();
+                        break;
+                    case 3:
+                        S_easy();
+                        break;
+                    case 4:
+                        S_other();
+                        break;
                     case 5:
-                            S_veryeasy();
-                            break;
+                        S_veryeasy();
+                        break;
                 }
             }
 
@@ -234,11 +240,6 @@ public class MainActivity extends AppCompatActivity {
             case 13:
                 snakeBody.addFirst(new S_node((snakeBody.getFirst().getNodeX() + 1)%10, snakeBody.getFirst().getNodeY()));
                 if (snakeBody.getFirst().getNodeX() > 9) {
-                    if (score > getHighestScore(level)) {
-                        highestScore = score;
-                        t_highestScore.setText("最高分: " + highestScore);
-                        t_score.setText("分数: " + score);
-                    }
                     gameOver();
                 }
                 if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
@@ -253,11 +254,6 @@ public class MainActivity extends AppCompatActivity {
             case 12:
                 snakeBody.addFirst(new S_node((snakeBody.getFirst().getNodeX() +9 )%10, snakeBody.getFirst().getNodeY()));
                 if (snakeBody.getFirst().getNodeX() < 0) {
-                    if (score > getHighestScore(level)) {
-                        highestScore = score;
-                        t_highestScore.setText("最高分: " + highestScore);
-                        t_score.setText("分数: " + score);
-                    }
                     gameOver();
                 }
                 if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
@@ -272,11 +268,6 @@ public class MainActivity extends AppCompatActivity {
             case 10:
                 snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), (snakeBody.getFirst().getNodeY() + 14)%15));
                 if (snakeBody.getFirst().getNodeY() < 0) {
-                    if (score > getHighestScore(level)) {
-                        highestScore = score;
-                        t_highestScore.setText("最高分: " + highestScore);
-                        t_score.setText("分数: " + score);
-                    }
                     gameOver();
                 } else {
                     if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
@@ -292,11 +283,6 @@ public class MainActivity extends AppCompatActivity {
             case 11:
                 snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), (snakeBody.getFirst().getNodeY() + 1)%15));
                 if (snakeBody.getFirst().getNodeY() > 14) {
-                    if (score > getHighestScore(level)) {
-                        highestScore = score;
-                        t_highestScore.setText("最高分: " + highestScore);
-                        t_score.setText("分数: " + score);
-                    }
                     gameOver();
                 } else {
                     if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
@@ -316,11 +302,6 @@ public class MainActivity extends AppCompatActivity {
             case 13:
                 snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() + 1, snakeBody.getFirst().getNodeY()));
                 if (snakeBody.getFirst().getNodeX() > 9) {
-                    if (score > getHighestScore(level)) {
-                        highestScore = score;
-                        t_highestScore.setText("最高分: " + highestScore);
-                        t_score.setText("分数: " + score);
-                    }
                     gameOver();
                 }
                 if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
@@ -335,11 +316,6 @@ public class MainActivity extends AppCompatActivity {
             case 12:
                 snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() - 1, snakeBody.getFirst().getNodeY()));
                 if (snakeBody.getFirst().getNodeX() < 0) {
-                    if (score > getHighestScore(level)) {
-                        highestScore = score;
-                        t_highestScore.setText("最高分: " + highestScore);
-                        t_score.setText("分数: " + score);
-                    }
                     gameOver();
                 }
                 if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
@@ -354,11 +330,6 @@ public class MainActivity extends AppCompatActivity {
             case 10:
                 snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() - 1));
                 if (snakeBody.getFirst().getNodeY() < 0) {
-                    if (score > getHighestScore(level)) {
-                        highestScore = score;
-                        t_highestScore.setText("最高分: " + highestScore);
-                        t_score.setText("分数: " + score);
-                    }
                     gameOver();
                 } else {
                     if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
@@ -374,11 +345,6 @@ public class MainActivity extends AppCompatActivity {
             case 11:
                 snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() + 1));
                 if (snakeBody.getFirst().getNodeY() > 14) {
-                    if (score > getHighestScore(level)) {
-                        highestScore = score;
-                        t_highestScore.setText("最高分: " + highestScore);
-                        t_score.setText("分数: " + score);
-                    }
                     gameOver();
                 } else {
                     if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
@@ -398,11 +364,6 @@ public class MainActivity extends AppCompatActivity {
             case 13:
                 snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() + 1, snakeBody.getFirst().getNodeY()));
                 if (snakeBody.getFirst().getNodeX() > 9) {
-                    if (score > getHighestScore(level)) {
-                        highestScore = score;
-                        t_highestScore.setText("最高分: " + highestScore);
-                        t_score.setText("分数: " + score);
-                    }
                     gameOver();
                 }
                 if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
@@ -414,11 +375,6 @@ public class MainActivity extends AppCompatActivity {
             case 12:
                 snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX() - 1, snakeBody.getFirst().getNodeY()));
                 if (snakeBody.getFirst().getNodeX() < 0) {
-                    if (score > getHighestScore(level)) {
-                        highestScore = score;
-                        t_highestScore.setText("最高分: " + highestScore);
-                        t_score.setText("分数: " + score);
-                    }
                     gameOver();
                 }
                 if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
@@ -430,11 +386,6 @@ public class MainActivity extends AppCompatActivity {
             case 10:
                 snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() - 1));
                 if (snakeBody.getFirst().getNodeY() < 0) {
-                    if (score > getHighestScore(level)) {
-                        highestScore = score;
-                        t_highestScore.setText("最高分: " + highestScore);
-                        t_score.setText("分数: " + score);
-                    }
                     gameOver();
                 } else {
                     if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
@@ -447,11 +398,6 @@ public class MainActivity extends AppCompatActivity {
             case 11:
                 snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), snakeBody.getFirst().getNodeY() + 1));
                 if (snakeBody.getFirst().getNodeY() > 14) {
-                    if (score > getHighestScore(level)) {
-                        highestScore = score;
-                        t_highestScore.setText("最高分: " + highestScore);
-                        t_score.setText("分数: " + score);
-                    }
                     gameOver();
                 } else {
                     if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
@@ -559,11 +505,6 @@ public class MainActivity extends AppCompatActivity {
 
         //若最后一行也满了，则游戏失败，保存数据
         if (allBlock[0]!=0){
-            if (score>getHighestScore(level)){
-                highestScore=score;
-                t_highestScore.setText("最高分: "+highestScore);
-                t_score.setText("分数: "+score);
-            }
             gameOver();
         }
 
@@ -616,6 +557,11 @@ public class MainActivity extends AppCompatActivity {
 
     //游戏结束
     private void gameOver(){
+        if (score > getHighestScore(level)) {
+            highestScore = score;
+            t_highestScore.setText("最高分: " + highestScore);
+            t_score.setText("分数: " + score);
+        }
         update(highestScore,level);
         stopTimer();
         //创建弹窗
@@ -845,7 +791,11 @@ public class MainActivity extends AppCompatActivity {
         b_btn_up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int nextB=B_Shape.nextshape[rand];
+                int nextB;
+                if (level==3||level==4)
+                    nextB=B_Shape.nextshape[random.nextInt(20)];
+                else
+                    nextB=B_Shape.nextshape[rand];
                 for (int i=3;i>=0;i--){
                     int line =i+position[0];
                     //检查是否越界
