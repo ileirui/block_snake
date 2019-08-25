@@ -65,6 +65,7 @@
         android:background="@drawable/btn_yuanjiao"/>
 
     <Button
+        android:id="@+id/btn_info_create"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_alignBottom="@id/btn_create"
@@ -72,7 +73,7 @@
         android:layout_marginBottom="15dp"
         android:layout_toRightOf="@id/btn_create"
         android:background="@drawable/btn_info"
-        android:id="@+id/btn_info_create"/>
+        />
     <Button
         android:layout_width="20dp"
         android:layout_height="20dp"

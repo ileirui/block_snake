@@ -373,7 +373,7 @@ public class CreateRoom extends AppCompatActivity {
         user_name.setText(u.getName(CreateRoom.this));
         btn_picture.setImageBitmap(u.getBitmip());
         btn_info_create=findViewById(R.id.btn_info_create);
-        btn_info_join=findViewById(R.id.btn_info_join)
+        btn_info_join=findViewById(R.id.btn_info_join);
         waitclient=null;
         change=null;
         Mode = 1;

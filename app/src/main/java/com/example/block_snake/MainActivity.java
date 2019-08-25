@@ -154,8 +154,21 @@ public class MainActivity extends AppCompatActivity {
            }
             //---------------------------------------------------------------------------------------------------------
             if(!(CreateRoom.Mode==0&&SelectMode.intnetMode==1)) {
-                S_easy();
+                switch (level){
+                    case 1:S_veryeasy();
+                            break;
+                    case 2:S_easy();
+                            break;
+                    case 4:S_other();
+                            break;
+                    case 5:
+                            S_veryeasy();
+                            break;
+                }
             }
+
+
+            //客户端接收程序
             if(SelectMode.intnetMode==1&&CreateRoom.Mode==1){
             client=new Thread(ClientListener);
             client.start();
@@ -186,6 +199,8 @@ public class MainActivity extends AppCompatActivity {
                     gameOver();
                 }
             }
+
+            //服务器接收程序
             if(SelectMode.intnetMode==1&&CreateRoom.Mode==0&&server==null){
                 mServerSocket=CreateRoom.mServerSocket;
                 server=new Thread(ServerListener);
@@ -198,6 +213,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
+
+            //刷新本窗体
             if(refresh) {
                 for (S_node node : snakeBody)
                     blockList.set(node.getNodeY() * xSize + node.getNodeX(), 7);
@@ -212,7 +229,88 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     //---------------------------------------------
-
+    void S_veryeasy(){
+        switch (direction) {
+            case 13:
+                snakeBody.addFirst(new S_node((snakeBody.getFirst().getNodeX() + 1)%10, snakeBody.getFirst().getNodeY()));
+                if (snakeBody.getFirst().getNodeX() > 9) {
+                    if (score > getHighestScore(level)) {
+                        highestScore = score;
+                        t_highestScore.setText("最高分: " + highestScore);
+                        t_score.setText("分数: " + score);
+                    }
+                    gameOver();
+                }
+                if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
+                    snakeBody.removeLast();
+                    allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
+                    // blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
+                    b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
+                    sendAllblock=true;
+                }
+                S_eat();
+                break;
+            case 12:
+                snakeBody.addFirst(new S_node((snakeBody.getFirst().getNodeX() +9 )%10, snakeBody.getFirst().getNodeY()));
+                if (snakeBody.getFirst().getNodeX() < 0) {
+                    if (score > getHighestScore(level)) {
+                        highestScore = score;
+                        t_highestScore.setText("最高分: " + highestScore);
+                        t_score.setText("分数: " + score);
+                    }
+                    gameOver();
+                }
+                if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
+                    snakeBody.removeLast();
+                    allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
+                    //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
+                    b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
+                    sendAllblock=true;
+                }
+                S_eat();
+                break;
+            case 10:
+                snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), (snakeBody.getFirst().getNodeY() + 14)%15));
+                if (snakeBody.getFirst().getNodeY() < 0) {
+                    if (score > getHighestScore(level)) {
+                        highestScore = score;
+                        t_highestScore.setText("最高分: " + highestScore);
+                        t_score.setText("分数: " + score);
+                    }
+                    gameOver();
+                } else {
+                    if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
+                        snakeBody.removeLast();
+                        allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
+                        //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
+                        b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
+                        sendAllblock=true;
+                    }
+                }
+                S_eat();
+                break;
+            case 11:
+                snakeBody.addFirst(new S_node(snakeBody.getFirst().getNodeX(), (snakeBody.getFirst().getNodeY() + 1)%15));
+                if (snakeBody.getFirst().getNodeY() > 14) {
+                    if (score > getHighestScore(level)) {
+                        highestScore = score;
+                        t_highestScore.setText("最高分: " + highestScore);
+                        t_score.setText("分数: " + score);
+                    }
+                    gameOver();
+                } else {
+                    if ((allBlock[snakeBody.getFirst().getNodeY()] & (int) Math.pow(2, snakeBody.getFirst().getNodeX())) != 0) {
+                        snakeBody.removeLast();
+                        allBlock[snakeBody.getFirst().getNodeY()] -= (int) Math.pow(2, snakeBody.getFirst().getNodeX());
+                        //blockList.set(snakeBody.getFirst().getNodeY()*xSize+snakeBody.getFirst().getNodeX(),0);
+                        b_color[snakeBody.getFirst().getNodeY()][snakeBody.getFirst().getNodeX()] = 0;
+                        sendAllblock=true;
+                    }
+                }
+                S_eat();
+                break;
+        }
+    }
     void S_easy(){
         switch (direction) {
             case 13:
@@ -365,10 +463,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
-    //蛇判定食物及自身函数
+    //蛇判定食物及自身函数,以及蛇身长度
     void S_eat(){
         snakeBodyC = (LinkedList<S_node>) snakeBody.clone();
         snakeBodyC.remove();
+        int length=0;
         for (S_node node : snakeBodyC) {
             if (node.getNodeX() == snakeBody.getFirst().getNodeX() && node.getNodeY() == snakeBody.getFirst().getNodeY()) {
                 if (score>getHighestScore(level)){
@@ -378,7 +477,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 gameOver();
             }
+            length++;
         }
+        if(length<3)
+            gameOver();
         if (snakeBody.getFirst().getNodeX() == food.getNodeX() && snakeBody.getFirst().getNodeY() == food.getNodeY()) {
             score++;
             t_score.setText("分数: "+score);
@@ -392,7 +494,20 @@ public class MainActivity extends AppCompatActivity {
     //食物生成函数
     S_node S_food(){
         random=new Random();
-        S_node foodrandom = new S_node( random.nextInt(9), random.nextInt(14));
+
+        /*int x=0,y=0;
+        boolean can=true;
+        while (can){
+            x=random.nextInt(9);
+            y=random.nextInt(14);
+        for(S_node node:snakeBody){
+            if(x!=node.getNodeY()||y!=node.getNodeY()){
+                continue;
+                  }
+                can=false;
+             }
+        }*/
+        S_node foodrandom = new S_node(random.nextInt(9), random.nextInt(14));
         return foodrandom;
     }
     //---------------------------------------------
@@ -826,13 +941,13 @@ public class MainActivity extends AppCompatActivity {
                 timeInterval=1000;
                 break;
             case 2:
-                timeInterval=800;
+                timeInterval=1000;
                 break;
             case 3:
-                timeInterval=600;
+                timeInterval=1000;
                 break;
             case 4:
-                timeInterval=400;
+                timeInterval=1000;
                 break;
             case 5:
                 timeInterval=1000;
